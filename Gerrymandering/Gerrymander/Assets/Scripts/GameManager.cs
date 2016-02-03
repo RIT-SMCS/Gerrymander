@@ -12,66 +12,76 @@ public class GameManager : MonoBehaviour {
     int[] partyDistricts = new int[3];
     //Dictionary<Affiliation, int> partyDistricts;
 
-	public Camera camera;
+    public Connector connectorPrefab;
 
-	private Node activeNode = null;
-	private bool mouseDown = false;
+	private Node startNode = null;
+
 	// Use this for initialization
 	void Start () {
+        nodes = new List<Node>();
+        connectors = new List<Connector>();
+        units = new List<Unit>();
         //partyDistricts[(int)Affiliation.Red]++;	
 	}
 
-	Transform RayCastHelper(out RaycastHit hit) {
-		Ray ray = camera.ScreenPointToRay (Input.mousePosition);
-		if (Physics.Raycast (ray, out hit)) {
-			return hit.transform;
-		} else {
-			return null;
-		}
-	}
 	// Update is called once per frame
 	void Update () {
-	    //mouse / touch input (raycasts)
-		RaycastHit hit;
+        #region mouse raycast
+        RaycastHit hit;
 		Transform objectHit = null;
-		Ray ray = camera.ScreenPointToRay (Input.mousePosition);
-		if (Physics.Raycast (ray, out hit)) {
-			objectHit = hit.transform;
-		}
-
-		//click/drag
-		if (Input.GetMouseButtonDown (0)) { //left click down
-			Debug.Log("mouseDown");
-			//click
-			if (!mouseDown) {
-				Debug.Log ("click");
-				//after input calculate districts 
-				//do not make connectors if there is no valid district made
-				if ((activeNode = objectHit.GetComponent<Node> ()) != null) {
-					activeNode.transform.Translate (Vector3.forward * Time.deltaTime);
-					//objectHit.Translate(Vector3.forward * Time.deltaTime);
-				}
-			} else { //drag
-
-			}
-		} else {//left click up
-			//release
-			if (mouseDown) {
-				Debug.Log("Release");
-				Node node2;
-				if (activeNode != null && (node2 = objectHit.GetComponent<Node> ()) != null) {
-					node2.transform.Translate (Vector3.forward * Time.deltaTime * 10.0f);
-					//objectHit.Translate(Vector3.forward * Time.deltaTime);
-				}
-			}
-			//nothing
-		}
-		//end raycast
+		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+        if (Physics.Raycast(ray, out hit)) {
+            objectHit = hit.transform;
+        }
+        else {
+            objectHit = this.transform;
+        }
+        #endregion
+        #region left click
+        if (Input.GetMouseButtonDown (0)) { //left click down
+			Debug.Log ("click");
+			if ((startNode = objectHit.GetComponent<Node> ()) != null) {
+            }
+		} if (Input.GetMouseButton(0)) { // left click drag    
+        }
+        else if (Input.GetMouseButtonUp(0)) {//left click up
+			Debug.Log("Release");
+            for (Node endNode = objectHit.GetComponent<Node>(); startNode != null && endNode != null && startNode != endNode; ) {
+                Connector c = (Connector)Instantiate(connectorPrefab);
+                c.A = startNode; 
+                c.B = endNode;
+                if (connectors.Contains(c)) {
+                    Debug.Log("Nodes already connected");
+                    Destroy(c.gameObject);
+                } else {
+                    c.transform.position = 0.5f * (startNode.transform.position+endNode.transform.position);
+                    c.transform.forward = startNode.transform.position-endNode.transform.position;
+                    c.transform.localScale = new Vector3(1.0f,1.0f,0.7f * (startNode.transform.position-endNode.transform.position).magnitude);
+                    c.transform.SetParent(this.transform);
+                    connectors.Add(c);
+                }
+                break;
+            }
+        }
+        #endregion
+        #region right click
+        if (Input.GetMouseButtonDown(1)) { //right click down
+            Debug.Log("click");
+            for (Connector ctr = objectHit.GetComponent<Connector>(); ctr != null;) {
+                Debug.Log("Removing conenector");
+                connectors.Remove(ctr);
+                Destroy(ctr.gameObject);
+                break;
+            }
+        } if (Input.GetMouseButton(1)) { // right click drag    
+        }
+        else if (Input.GetMouseButtonUp(1)) {//right click up
+        }
+        #endregion
+        //end raycast
 
 		
         //update GUI
         //check for win condition
-
-		mouseDown = Input.GetMouseButtonDown (0);
 	}
 }
