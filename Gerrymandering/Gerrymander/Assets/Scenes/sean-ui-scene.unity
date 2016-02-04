@@ -131,9 +131,9 @@ MonoBehaviour:
     m_Alignment: 4
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Goal
+  m_Text: Make the Dem's Win
 --- !u!222 &167628370
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -155,7 +155,7 @@ RectTransform:
   m_AnchorMin: {x: .5, y: .949999988}
   m_AnchorMax: {x: .5, y: .949999988}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 30}
+  m_SizeDelta: {x: 80, y: 30}
   m_Pivot: {x: .5, y: .5}
 --- !u!1 &172865144
 GameObject:
@@ -189,7 +189,7 @@ RectTransform:
   m_AnchorMin: {x: .5, y: .0500000007}
   m_AnchorMax: {x: .5, y: .0500000007}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 29}
+  m_SizeDelta: {x: 80, y: 30}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &172865146
 MonoBehaviour:
@@ -302,8 +302,8 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: .5, y: .949999988}
   m_AnchorMax: {x: .5, y: .949999988}
-  m_AnchoredPosition: {x: -160, y: 0}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -80, y: 0}
+  m_SizeDelta: {x: 80, y: 30}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &243066497
 MonoBehaviour:
@@ -334,9 +334,9 @@ MonoBehaviour:
     m_Alignment: 4
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Population
+  m_Text: 3/16 Units Districted
 --- !u!222 &243066498
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -374,8 +374,8 @@ RectTransform:
   m_RootOrder: 3
   m_AnchorMin: {x: .5, y: .0500000007}
   m_AnchorMax: {x: .5, y: .0500000007}
-  m_AnchoredPosition: {x: -160, y: 0}
-  m_SizeDelta: {x: 160, y: 29}
+  m_AnchoredPosition: {x: -80, y: 0}
+  m_SizeDelta: {x: 80, y: 30}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &244167556
 MonoBehaviour:
@@ -426,6 +426,7 @@ GameObject:
   - 223: {fileID: 282300584}
   - 114: {fileID: 282300583}
   - 114: {fileID: 282300582}
+  - 114: {fileID: 282300585}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -510,6 +511,30 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
+--- !u!114 &282300585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 282300580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 994aa91a839eee74386a6efb5f9defb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gmObj: {fileID: 657610456}
+  Goal: {fileID: 167628368}
+  Pop: {fileID: 243066495}
+  District: {fileID: 940886677}
+  GOP: {fileID: 244167554}
+  Dem: {fileID: 172865144}
+  Ind: {fileID: 1762932398}
+  GoalText: {fileID: 0}
+  PopText: {fileID: 0}
+  DistrictText: {fileID: 0}
+  GOPText: {fileID: 0}
+  DemText: {fileID: 0}
+  IndText: {fileID: 0}
 --- !u!1 &640814477
 GameObject:
   m_ObjectHideFlags: 0
@@ -584,6 +609,10 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 8
+--- !u!1 &657610456 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 178802, guid: 2388fc7d134653a43b7ab2586c828266, type: 2}
+  m_PrefabInternal: {fileID: 1199512939}
 --- !u!1 &888746715
 GameObject:
   m_ObjectHideFlags: 0
@@ -643,7 +672,7 @@ Camera:
   near clip plane: .300000012
   far clip plane: 1000
   field of view: 60
-  orthographic: 1
+  orthographic: 0
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
@@ -701,8 +730,8 @@ RectTransform:
   m_RootOrder: 2
   m_AnchorMin: {x: .5, y: .949999988}
   m_AnchorMax: {x: .5, y: .949999988}
-  m_AnchoredPosition: {x: 160, y: 0}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 80, y: 30}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &940886679
 MonoBehaviour:
@@ -733,7 +762,7 @@ MonoBehaviour:
     m_Alignment: 4
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: x/y Districts
 --- !u!222 &940886680
@@ -841,6 +870,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 11403942, guid: 2388fc7d134653a43b7ab2586c828266, type: 2}
+      propertyPath: uiCanvas
+      value: 
+      objectReference: {fileID: 282300580}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2388fc7d134653a43b7ab2586c828266, type: 2}
   m_IsPrefabParent: 0
@@ -1013,8 +1046,8 @@ RectTransform:
   m_RootOrder: 5
   m_AnchorMin: {x: .5, y: .0500000007}
   m_AnchorMax: {x: .5, y: .0500000007}
-  m_AnchoredPosition: {x: 160, y: 0}
-  m_SizeDelta: {x: 160, y: 29}
+  m_AnchoredPosition: {x: 80, y: 0}
+  m_SizeDelta: {x: 80, y: 30}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &1762932400
 MonoBehaviour:
