@@ -38,19 +38,22 @@ public class GameManager : MonoBehaviour {
             //do not make connectors if there is no valid district made
         //update GUI
 
-        //uiManager.PopText.text = "/" + units.Count;
+        // TODO: Let these functionCalls not error out by having a way to get these strings a good value
+        //uiManager.setText(uiManager.Pop, unitsInDistricts "/" + units.Count);
+        //uiManager.setText(uiManager.Goal, goalParameters);
+        //uiManager.setText(uiManager.Districts, [NEED A VARIABLE FOR THIS])
 
         foreach(int party in partyDistricts)
         {
             switch (party){
                 case (int)Affiliation.Red:
-                    uiManager.GOPText.text = party + "/5 Rep";
+                    uiManager.setText(uiManager.GOP, party + "/5 Rep");
                     break;
                 case (int)Affiliation.Blue:
-                    uiManager.DemText.text = party + "/6 Dem";
+                    uiManager.setText(uiManager.Dem, party + "/6 Dem");
                     break;
                 case (int)Affiliation.Green:
-                    uiManager.IndText.text = party + "/5 Ind";
+                    uiManager.setText(uiManager.Ind, party + "/5 Ind");
                     break;
                 default:
                     break;

@@ -529,12 +529,6 @@ MonoBehaviour:
   GOP: {fileID: 244167554}
   Dem: {fileID: 172865144}
   Ind: {fileID: 1762932398}
-  GoalText: {fileID: 0}
-  PopText: {fileID: 0}
-  DistrictText: {fileID: 0}
-  GOPText: {fileID: 0}
-  DemText: {fileID: 0}
-  IndText: {fileID: 0}
 --- !u!1 &640814477
 GameObject:
   m_ObjectHideFlags: 0
