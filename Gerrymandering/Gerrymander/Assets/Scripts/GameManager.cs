@@ -37,10 +37,17 @@ public class GameManager : MonoBehaviour
         if (_connectors.Count > 2)
         {
             int[,] matrix = createAdjMatrix(_connectors);
+            HashSet<Connector> vis = new HashSet<Connector>();
+            Stack<Connector> active = new Stack<Connector>();
+
             for (int i = 0; i < _connectors.Count; i++)
             {
-                Node temp = _connectors[i].A;
+                active.Push(_connectors[i]);
+                
+                while(active.Count != 0)
+                {
 
+                }
             }
         }
     }
