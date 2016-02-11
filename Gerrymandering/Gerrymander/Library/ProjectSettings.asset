@@ -92,11 +92,7 @@ PlayerSettings:
   metroEnableLowLatencyPresentationAPI: 0
   xboxOneDisableKinectGpuReservation: 0
   virtualRealitySupported: 0
-<<<<<<< HEAD
-  productGUID: 9817c97ef7df04d44bfb8f279a52ba1f
-=======
-  productGUID: ea40eb822cf65594fbaff913824372a8
->>>>>>> origin/Sarah_DistrictStuff
+  productGUID: 15d5e859a6553b741a386332d50ab9ca
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 9
   AndroidPreferredInstallLocation: 1
