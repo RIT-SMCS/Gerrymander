@@ -2,10 +2,10 @@
 using System.Collections;
 
 public class Unit : MonoBehaviour {
-    Affiliation affiliation;
+    public Affiliation affiliation;
 	// Use this for initialization
 	void Start () {
-	
+
 	}
 	
 	// Update is called once per frame

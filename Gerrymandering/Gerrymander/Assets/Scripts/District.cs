@@ -5,7 +5,7 @@ using System.Collections;
 public class District : MonoBehaviour {
     List<Connector> connectors;
     List<Unit> members;
-    Affiliation majority;
+    public Affiliation majority;
 
     int requiredSize = 0;
     
@@ -23,4 +23,8 @@ public class District : MonoBehaviour {
 
     void CalculateMajority() { }
     bool IsValid() { return members.Count == requiredSize; }
+    public List<Unit> GetMembers()
+    {
+        return members;
+    }
 }

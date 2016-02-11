@@ -1,18 +1,25 @@
-﻿using UnityEngine;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Collections;
+using UnityEngine;
 
 //awful coding practice.
 //change colors for color-blind people
-enum Affiliation { Red = 0, Blue = 1, Green = 2, };
+public enum Affiliation { Red = 0, Blue = 1, Green = 2, };
 public class GameManager : MonoBehaviour {
     public GameObject uiCanvas;
     List<Node> nodes;
     List<Connector> connectors;
     List<Unit> units;
+    List<District> districts;
+    //number of districts each party controls
     int[] partyDistricts = new int[3];
     UIManager uiManager;
-    
+    Affiliation winningTeam = Affiliation.Red;
+    int goalDistricts = 3;
+    int currentDistricts = 0;
+    int totalRed, totalBlue, totalGreen = 0;
+    int currentRed, currentBlue, currentGreen = 0;
+
     //Dictionary<Affiliation, int> partyDistricts;
 
     public Connector connectorPrefab;
@@ -24,6 +31,25 @@ public class GameManager : MonoBehaviour {
         nodes = new List<Node>();
         connectors = new List<Connector>();
         units = new List<Unit>();
+        districts = new List<District>();
+        GameObject[] unitPrefabs = GameObject.FindGameObjectsWithTag("Unit");
+        foreach (GameObject obj in unitPrefabs) {
+            units.Add(obj.GetComponent<Unit>());
+            switch (units[units.Count - 1].affiliation) {
+                case Affiliation.Blue:
+                    totalBlue += 1;
+                    break;
+                case Affiliation.Green:
+                    totalGreen += 1;
+                    break;
+                case Affiliation.Red:
+                    totalRed += 1;
+                    break;
+                default:
+                    break;
+            
+            }
+        }
         //partyDistricts[(int)Affiliation.Red]++;	
         if(uiCanvas != null)
         {
@@ -92,25 +118,66 @@ public class GameManager : MonoBehaviour {
         #endregion
         //end raycast
 
-		
+
         //update GUI
 
-        // TODO: Let these functionCalls not error out by having a way to get these strings a good value
-        //uiManager.setText(uiManager.Pop, unitsInDistricts "/" + units.Count);
-        //uiManager.setText(uiManager.Goal, goalParameters);
-        //uiManager.setText(uiManager.Districts, [NEED A VARIABLE FOR THIS])
+        int unitsInDistricts = 0;
+        uiManager.setText(uiManager.Pop, unitsInDistricts + "/" + units.Count + " in district");
+        string winner = "blah" ;
+        if (winningTeam == Affiliation.Blue)
+        {
+            winner = "Dems";
+        }
+        else if (winningTeam == Affiliation.Red)
+        {
+            winner = "Reps";
+        }
+        else winner = "Inds";
+        uiManager.setText(uiManager.Goal, goalDistricts + " Districts, " + winner + " Win" );
+        uiManager.setText(uiManager.District, currentDistricts + "/" + goalDistricts + " Districts");
+        currentBlue = currentGreen = currentRed = 0;
+        foreach (District dist in districts)
+        {
+            switch (dist.majority)
+            {
+                case Affiliation.Red:
+                    partyDistricts[0] += 1;
+                    break;
+                case Affiliation.Blue:
+                    partyDistricts[1] += 1;
+                    break;
+                 case Affiliation.Green:
+                    partyDistricts[2] += 1;
+                    break;
+            }
 
+            foreach (Unit voter in dist.GetMembers())
+            {
+                switch(voter.affiliation)
+                {
+                    case Affiliation.Red:
+                        currentRed += 1;
+                        break;
+                    case Affiliation.Blue:
+                        currentBlue += 1;
+                        break;
+                    case Affiliation.Green:
+                        currentGreen += 1;
+                        break;
+                }
+            }
+        }
         foreach(int party in partyDistricts)
         {
             switch (party){
                 case (int)Affiliation.Red:
-                    uiManager.setText(uiManager.GOP, party + "/5 Rep");
+                    uiManager.setText(uiManager.GOP, currentRed + "/" + totalRed + " Rep");
                     break;
                 case (int)Affiliation.Blue:
-                    uiManager.setText(uiManager.Dem, party + "/6 Dem");
+                    uiManager.setText(uiManager.Dem, currentBlue + "/" + totalBlue + " Dem");
                     break;
                 case (int)Affiliation.Green:
-                    uiManager.setText(uiManager.Ind, party + "/5 Ind");
+                    uiManager.setText(uiManager.Ind, currentGreen + "/" + totalGreen + " Ind");
                     break;
                 default:
                     break;
