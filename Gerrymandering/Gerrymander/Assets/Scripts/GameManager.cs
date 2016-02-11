@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour {
     public Connector connectorPrefab;
 
 	private Node startNode = null;
+    private Connector tempConnector = null;
 
 	// Use this for initialization
 	void Start () {
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour {
         connectors = new List<Connector>();
         units = new List<Unit>();
         //partyDistricts[(int)Affiliation.Red]++;	
+        
 	}
 
 	// Update is called once per frame
@@ -41,26 +43,42 @@ public class GameManager : MonoBehaviour {
         if (Input.GetMouseButtonDown (0)) { //left click down
 			Debug.Log ("click");
 			if ((startNode = objectHit.GetComponent<Node> ()) != null) {
+                tempConnector = (Connector)Instantiate(connectorPrefab);
+                tempConnector.transform.localScale = Vector3.zero;
             }
-		} if (Input.GetMouseButton(0)) { // left click drag    
+		} else if (Input.GetMouseButton(0)) { // left click drag    
+            if (startNode != null) {
+                tempConnector.transform.position = 0.5f * (startNode.transform.position + hit.point);
+                tempConnector.transform.forward = startNode.transform.position - hit.point;
+                tempConnector.transform.localScale = new Vector3(1.0f, 1.0f, 0.7f * (startNode.transform.position - hit.point).magnitude);
+                tempConnector.transform.SetParent(this.transform);
+                tempConnector.name = "dragged connector";
+            }
+            // working click through
+            for (Node endNode = objectHit.GetComponent<Node>(); startNode != null && endNode != null && startNode != endNode; ) {
+                Connector c = (Connector)Instantiate(connectorPrefab);
+                c.A = startNode;
+                c.B = endNode;
+                if (connectors.Contains(c)) {
+                    //Debug.Log("Nodes already connected");
+                    Destroy(c.gameObject);
+                }
+                else {
+                    c.transform.position = 0.5f * (startNode.transform.position + endNode.transform.position);
+                    c.transform.forward = startNode.transform.position - endNode.transform.position;
+                    c.transform.localScale = new Vector3(1.0f, 1.0f, 0.7f * (startNode.transform.position - endNode.transform.position).magnitude);
+                    c.transform.SetParent(this.transform);
+                    connectors.Add(c);
+                    startNode = endNode;
+                }
+                break;
+            } 
         }
         else if (Input.GetMouseButtonUp(0)) {//left click up
 			Debug.Log("Release");
-            for (Node endNode = objectHit.GetComponent<Node>(); startNode != null && endNode != null && startNode != endNode; ) {
-                Connector c = (Connector)Instantiate(connectorPrefab);
-                c.A = startNode; 
-                c.B = endNode;
-                if (connectors.Contains(c)) {
-                    Debug.Log("Nodes already connected");
-                    Destroy(c.gameObject);
-                } else {
-                    c.transform.position = 0.5f * (startNode.transform.position+endNode.transform.position);
-                    c.transform.forward = startNode.transform.position-endNode.transform.position;
-                    c.transform.localScale = new Vector3(1.0f,1.0f,0.7f * (startNode.transform.position-endNode.transform.position).magnitude);
-                    c.transform.SetParent(this.transform);
-                    connectors.Add(c);
-                }
-                break;
+            if (tempConnector != null) {
+                Destroy(tempConnector.gameObject);
+                tempConnector = null;
             }
         }
         #endregion
