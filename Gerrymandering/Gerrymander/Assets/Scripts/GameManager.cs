@@ -32,23 +32,46 @@ public class GameManager : MonoBehaviour
         //check for win condition
     }
 
-    void checkForDistricts(Connector c)
-    {
-        if (connectors.Count > 2)
+    void checkForDistricts(Node first, Node curr)
+    {        
+        //int[,] matrix = createAdjMatrix(connectors);
+        if(curr == first)
         {
-            //int[,] matrix = createAdjMatrix(connectors);
-            Node start = c.A;
-            for (int i = 0; i < connectors.Count; i++)
+            districts.Add(new District());
+            return;
+        }
+        for(int i = 0; i < curr.GetConnectors().Count; i++)
+        {
+            if (!curr.GetConnectors()[i].isVisited)
             {
-                if(c != connectors[i])
+                if (curr.GetConnectors()[i].A != curr)
                 {
-                    if(c.B == connectors[i].A || c.B == connectors[i].B)
-                    {
-
-                    }
-                }       
+                    curr.GetConnectors()[i].isVisited = true;
+                    checkForDistricts(first, curr.GetConnectors()[i].A);
+                    curr.GetConnectors()[i].isVisited = false;
+                }
+                else
+                {
+                    curr.GetConnectors()[i].isVisited = true;
+                    checkForDistricts(first, curr.GetConnectors()[i].B);
+                    curr.GetConnectors()[i].isVisited = false;
+                }
             }
         }
+        //for (int i = 0; i < connectors.Count; i++)
+        //{
+        //    if(curr != connectors[i])
+        //    {
+        //        if(curr.B == connectors[i].A || curr.B == connectors[i].B)
+        //        {
+        //            next = connectors[i];
+        //            if (connectors[i].A == first || connectors[i].B == first)
+        //                districts.Add(new District());
+        //            else
+        //                checkForDistricts(first, next);
+        //        }
+        //    }       
+        //}        
     }
 
     int[,] createAdjMatrix(List<Connector> _connectors)

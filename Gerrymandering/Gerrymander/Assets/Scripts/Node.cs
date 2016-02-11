@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 
 public class Node : MonoBehaviour {
-    private List<Connector> Connectors;
+    private List<Connector> connectors;
 	// Use this for initialization
 	void Start () {
 	
@@ -13,4 +13,6 @@ public class Node : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    public List<Connector> GetConnectors() { return connectors; }
 }
