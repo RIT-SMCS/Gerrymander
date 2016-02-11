@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour {
     public Connector connectorPrefab;
 
 	private Node startNode = null;
+    private Connector tempConnector = null;
 
 	// Use this for initialization
 	void Start () {
@@ -34,6 +35,15 @@ public class GameManager : MonoBehaviour {
         {
             partyDistricts[i] = i;
         }
+        //partyDistricts[(int)Affiliation.Red]++;
+        //Create a background collider for raycast checks	
+        GameObject backgroundPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        backgroundPlane.transform.position = Vector3.zero;
+        backgroundPlane.transform.localScale = new Vector3(10.0f, 10.0f, 10.0f);
+        for (MeshRenderer mr = backgroundPlane.GetComponent<MeshRenderer>(); mr != null; mr = null){
+            mr.enabled = false;
+        }
+        backgroundPlane.name = "Background Plane";
 	}
 
 	// Update is called once per frame
@@ -53,26 +63,42 @@ public class GameManager : MonoBehaviour {
         if (Input.GetMouseButtonDown (0)) { //left click down
 			Debug.Log ("click");
 			if ((startNode = objectHit.GetComponent<Node> ()) != null) {
+                tempConnector = (Connector)Instantiate(connectorPrefab);
+                tempConnector.transform.localScale = Vector3.zero;
+                tempConnector.transform.SetParent(this.transform);
+                tempConnector.name = "dragged connector";
+                tempConnector.GetComponent<Renderer>().material.color = Color.green;
             }
-		} if (Input.GetMouseButton(0)) { // left click drag    
+		} else if (Input.GetMouseButton(0)) { // left click drag    
+            if (startNode != null) {
+                UpdateConnector(tempConnector, startNode.transform.position, hit.point);
+                tempConnector.GetComponent<Renderer>().material.color = Color.green;
+            }
+            // working click through
+            for (Node endNode = objectHit.GetComponent<Node>(); startNode != null && endNode != null && startNode != endNode; ) {
+                Connector c = (Connector)Instantiate(connectorPrefab);
+                c.A = startNode;
+                c.B = endNode;
+                if (connectors.Contains(c)) {
+                    //Debug.Log("Nodes already connected");
+                    Destroy(c.gameObject);
+                    tempConnector.GetComponent<Renderer>().material.color = Color.red;
+                }
+                else {
+                    UpdateConnector(c, startNode.transform.position, endNode.transform.position);
+                    c.GetComponent<Renderer>().material.color = Color.blue;
+                    c.transform.SetParent(this.transform);
+                    connectors.Add(c);
+                    startNode = endNode;
+                }
+                break;
+            } 
         }
         else if (Input.GetMouseButtonUp(0)) {//left click up
 			Debug.Log("Release");
-            for (Node endNode = objectHit.GetComponent<Node>(); startNode != null && endNode != null && startNode != endNode; ) {
-                Connector c = (Connector)Instantiate(connectorPrefab);
-                c.A = startNode; 
-                c.B = endNode;
-                if (connectors.Contains(c)) {
-                    Debug.Log("Nodes already connected");
-                    Destroy(c.gameObject);
-                } else {
-                    c.transform.position = 0.5f * (startNode.transform.position+endNode.transform.position);
-                    c.transform.forward = startNode.transform.position-endNode.transform.position;
-                    c.transform.localScale = new Vector3(1.0f,1.0f,0.7f * (startNode.transform.position-endNode.transform.position).magnitude);
-                    c.transform.SetParent(this.transform);
-                    connectors.Add(c);
-                }
-                break;
+            if (tempConnector != null) {
+                Destroy(tempConnector.gameObject);
+                tempConnector = null;
             }
         }
         #endregion
@@ -118,4 +144,15 @@ public class GameManager : MonoBehaviour {
         }
         //check for win condition
 	}
+    /// <summary>
+    /// Updates the position and shape of a Connector to fit between the two given points
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="initPoint"></param>
+    /// <param name="endPoint"></param>
+    private void UpdateConnector(Connector c, Vector3 initPoint, Vector3 endPoint) {
+        c.transform.position = 0.5f * (initPoint + endPoint);
+        c.transform.forward = initPoint - endPoint;
+        c.transform.localScale = new Vector3(0.5f, 0.5f, 0.9f * (initPoint - endPoint).magnitude);
+    }
 }
