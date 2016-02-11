@@ -3,10 +3,10 @@ using System.Collections;
 [ExecuteInEditMode]
 public class Unit : MonoBehaviour {
     public Affiliation affiliation;
-	// Use this for initialization
-	void Start () {
-
-	}
+    // Use this for initialization
+    void Start()
+    {
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -24,3 +24,4 @@ public class Unit : MonoBehaviour {
         }
 	}
 }
+
