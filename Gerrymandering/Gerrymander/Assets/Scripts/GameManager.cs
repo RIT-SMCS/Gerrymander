@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour {
     int currentRed, currentBlue, currentGreen = 0;
 
     //Dictionary<Affiliation, int> partyDistricts;
-
     public Connector connectorPrefab;
 
 	private Node startNode = null;
@@ -145,8 +144,13 @@ public class GameManager : MonoBehaviour {
         //end raycast
 
 
-        //update GUI
 
+        //mouse / touch input (raycasts)
+        //after input calculate districts 
+        //do not make connectors if there is no valid district made
+
+        //update GUI
+        #region checkDistricts
         int unitsInDistricts = 0;
         uiManager.setText(uiManager.Pop, unitsInDistricts + "/" + units.Count + " in district");
         string winner = "blah" ;
@@ -209,7 +213,8 @@ public class GameManager : MonoBehaviour {
                     break;
             }
         }
-        //check for win condition
+        #endregion
+//check for win condition
 	}
     /// <summary>
     /// Updates the position and shape of a Connector to fit between the two given points
@@ -222,4 +227,67 @@ public class GameManager : MonoBehaviour {
         c.transform.forward = initPoint - endPoint;
         c.transform.localScale = new Vector3(0.5f, 0.5f, 0.9f * (initPoint - endPoint).magnitude);
     }
+
+    void checkForDistricts(Node first, Node curr)
+    {        
+        //int[,] matrix = createAdjMatrix(connectors);
+        if(curr == first)
+        {
+            districts.Add(new District());
+            return;
+        }
+        for(int i = 0; i < curr.GetConnectors().Count; i++)
+        {
+            if (!curr.GetConnectors()[i].isVisited)
+            {
+                if (curr.GetConnectors()[i].A != curr)
+                {
+                    curr.GetConnectors()[i].isVisited = true;
+                    checkForDistricts(first, curr.GetConnectors()[i].A);
+                    curr.GetConnectors()[i].isVisited = false;
+                }
+                else
+                {
+                    curr.GetConnectors()[i].isVisited = true;
+                    checkForDistricts(first, curr.GetConnectors()[i].B);
+                    curr.GetConnectors()[i].isVisited = false;
+                }
+            }
+        }
+        //for (int i = 0; i < connectors.Count; i++)
+        //{
+        //    if(curr != connectors[i])
+        //    {
+        //        if(curr.B == connectors[i].A || curr.B == connectors[i].B)
+        //        {
+        //            next = connectors[i];
+        //            if (connectors[i].A == first || connectors[i].B == first)
+        //                districts.Add(new District());
+        //            else
+        //                checkForDistricts(first, next);
+        //        }
+        //    }       
+        //}        
+    }
+
+    int[,] createAdjMatrix(List<Connector> _connectors)
+    {
+        int[,] m = new int[_connectors.Count, _connectors.Count];
+        for (int i = 0; i < _connectors.Count; i++)
+        {
+            for (int j = 0; j < _connectors.Count; j++)
+            {
+                if (_connectors[i] != _connectors[j])
+                {
+                    if (_connectors[i].B == _connectors[j].A || _connectors[i].B == _connectors[j].B)
+                        m[i, j] = 1;
+                    else
+                        m[i, j] = 0;
+                }
+            }
+        }
+
+        return m;
+    }    
 }
+

@@ -4,6 +4,7 @@ using System.Collections;
 public class Connector : MonoBehaviour {
 
     public Node A, B;
+    public bool isVisited = false;
 
 	// Use this for initialization
 	void Start () {
