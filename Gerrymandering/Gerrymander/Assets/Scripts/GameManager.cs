@@ -32,22 +32,21 @@ public class GameManager : MonoBehaviour
         //check for win condition
     }
 
-    void checkForDistricts(List<Connector> _connectors)
+    void checkForDistricts(Connector c)
     {
-        if (_connectors.Count > 2)
+        if (connectors.Count > 2)
         {
-            int[,] matrix = createAdjMatrix(_connectors);
-            HashSet<Connector> vis = new HashSet<Connector>();
-            Stack<Connector> active = new Stack<Connector>();
-
-            for (int i = 0; i < _connectors.Count; i++)
+            //int[,] matrix = createAdjMatrix(connectors);
+            Node start = c.A;
+            for (int i = 0; i < connectors.Count; i++)
             {
-                active.Push(_connectors[i]);
-                
-                while(active.Count != 0)
+                if(c != connectors[i])
                 {
+                    if(c.B == connectors[i].A || c.B == connectors[i].B)
+                    {
 
-                }
+                    }
+                }       
             }
         }
     }
@@ -70,6 +69,6 @@ public class GameManager : MonoBehaviour
         }
 
         return m;
-    }
+    }    
 }
 
