@@ -250,7 +250,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 1/6 Dem
+  m_Text: x/y Dem
 --- !u!114 &11451234
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -282,7 +282,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 0/5 Rep
+  m_Text: x/y Rep
 --- !u!114 &11454948
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -367,7 +367,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 2/5 Ind
+  m_Text: x/y Ind
 --- !u!222 &22218418
 CanvasRenderer:
   m_ObjectHideFlags: 1
