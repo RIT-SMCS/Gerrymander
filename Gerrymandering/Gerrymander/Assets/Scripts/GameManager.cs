@@ -228,47 +228,65 @@ public class GameManager : MonoBehaviour {
         c.transform.localScale = new Vector3(0.5f, 0.5f, 0.9f * (initPoint - endPoint).magnitude);
     }
 
-    void checkForDistricts(Node first, Node curr)
-    {        
-        //int[,] matrix = createAdjMatrix(connectors);
-        if(curr == first)
+    //void checkForDistricts(Node first, Node curr)
+    //{        
+    //    //int[,] matrix = createAdjMatrix(connectors);
+    //    if(curr == first)
+    //    {
+    //        districts.Add(new District());
+    //        return;
+    //    }
+    //    for(int i = 0; i < curr.GetConnectors().Count; i++)
+    //    {
+    //        if (!curr.GetConnectors()[i].isVisited)
+    //        {
+    //            if (curr.GetConnectors()[i].A != curr)
+    //            {
+    //                curr.GetConnectors()[i].isVisited = true;
+    //                checkForDistricts(first, curr.GetConnectors()[i].A);
+    //                curr.GetConnectors()[i].isVisited = false;
+    //            }
+    //            else
+    //            {
+    //                curr.GetConnectors()[i].isVisited = true;
+    //                checkForDistricts(first, curr.GetConnectors()[i].B);
+    //                curr.GetConnectors()[i].isVisited = false;
+    //            }
+    //        }
+    //    }               
+    //}
+
+    void checkForDistricts(Node n)
+    {
+        Queue<Node> active = new Queue<Node>();
+        Node first = n;
+        active.Enqueue(n);
+        while(active.Count != 0)
         {
-            districts.Add(new District());
-            return;
-        }
-        for(int i = 0; i < curr.GetConnectors().Count; i++)
-        {
-            if (!curr.GetConnectors()[i].isVisited)
+            Node temp = active.Dequeue();
+            if(temp == first)
             {
-                if (curr.GetConnectors()[i].A != curr)
+                districts.Add(new District());
+            }
+            foreach(Connector c in temp.GetConnectors())
+            {
+                if(!c.isVisited)
                 {
-                    curr.GetConnectors()[i].isVisited = true;
-                    checkForDistricts(first, curr.GetConnectors()[i].A);
-                    curr.GetConnectors()[i].isVisited = false;
-                }
-                else
-                {
-                    curr.GetConnectors()[i].isVisited = true;
-                    checkForDistricts(first, curr.GetConnectors()[i].B);
-                    curr.GetConnectors()[i].isVisited = false;
+                    if(c.A != temp)
+                    {
+                        active.Enqueue(c.A);
+                        c.isVisited = true;
+                    }
+                    else
+                    {
+                        active.Enqueue(c.B);
+                        c.isVisited = true;
+                    }
                 }
             }
         }
-        //for (int i = 0; i < connectors.Count; i++)
-        //{
-        //    if(curr != connectors[i])
-        //    {
-        //        if(curr.B == connectors[i].A || curr.B == connectors[i].B)
-        //        {
-        //            next = connectors[i];
-        //            if (connectors[i].A == first || connectors[i].B == first)
-        //                districts.Add(new District());
-        //            else
-        //                checkForDistricts(first, next);
-        //        }
-        //    }       
-        //}        
     }
+
 
     int[,] createAdjMatrix(List<Connector> _connectors)
     {

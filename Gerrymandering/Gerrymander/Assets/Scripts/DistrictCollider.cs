@@ -6,6 +6,7 @@ public class DistrictCollider : MonoBehaviour {
 	public PolygonCollider2D area; 
 	public GameObject[] points; 
 
+
 	// Use this for initialization
 	void Start () {
 		area = this.gameObject.GetComponent<PolygonCollider2D> (); 
