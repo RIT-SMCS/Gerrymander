@@ -285,6 +285,10 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
+        foreach(Connector c in connectors)
+        {
+            c.isVisited = false;
+        }
     }
 
 
