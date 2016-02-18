@@ -22,8 +22,10 @@ public class GameManager : MonoBehaviour {
 
     //Dictionary<Affiliation, int> partyDistricts;
     public Connector connectorPrefab;
+    public float maxConnectorLength = 5.0f;
 
-	private Node startNode = null;
+
+    private Node startNode = null;
     private Connector tempConnector = null;
 
 	// Use this for initialization
@@ -95,12 +97,25 @@ public class GameManager : MonoBehaviour {
                 tempConnector.GetComponent<Renderer>().material.color = Color.green;
             }
 		} else if (Input.GetMouseButton(0)) { // left click drag    
+            bool validConnector = true;
             if (startNode != null) {
                 UpdateConnector(tempConnector, startNode.transform.position, hit.point);
-                tempConnector.GetComponent<Renderer>().material.color = Color.green;
+                if (tempConnector.IsColliding())
+                {
+                    tempConnector.GetComponent<Renderer>().material.color = Color.red;
+                    validConnector = false;
+                }
+                else if (tempConnector.transform.localScale.z > maxConnectorLength)
+                {
+                    tempConnector.GetComponent<Renderer>().material.color = Color.magenta;
+                    validConnector = false;
+                }
+                else {
+                    tempConnector.GetComponent<Renderer>().material.color = Color.green;
+                }
             }
             // working click through
-            for (Node endNode = objectHit.GetComponent<Node>(); startNode != null && endNode != null && startNode != endNode; ) {
+            for (Node endNode = objectHit.GetComponent<Node>(); startNode != null && endNode != null && startNode != endNode && validConnector; ) {
                 Connector c = (Connector)Instantiate(connectorPrefab);
                 c.A = startNode;
                 c.B = endNode;
@@ -225,7 +240,7 @@ public class GameManager : MonoBehaviour {
     private void UpdateConnector(Connector c, Vector3 initPoint, Vector3 endPoint) {
         c.transform.position = 0.5f * (initPoint + endPoint);
         c.transform.forward = initPoint - endPoint;
-        c.transform.localScale = new Vector3(0.5f, 0.5f, 0.9f * (initPoint - endPoint).magnitude);
+        c.transform.localScale = new Vector3(0.2f, 0.2f, 0.95f * (initPoint - endPoint).magnitude-1.0f);
     }
 
     void checkForDistricts(Node first, Node curr)

@@ -6,6 +6,8 @@ public class Connector : MonoBehaviour {
     public Node A, B;
     public bool isVisited = false;
 
+    private int numCollisions = 0;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -46,5 +48,25 @@ public class Connector : MonoBehaviour {
 
     public override int GetHashCode() {
         return this.A.GetHashCode() * this.B.GetHashCode();
+    }
+
+    public bool IsColliding()
+    {
+        return numCollisions > 0;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.GetComponent<Node>() != null || collision.gameObject.GetComponent<Connector>() != null)
+        {
+            ++numCollisions;
+        }
+    }
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.GetComponent<Node>() != null || collision.gameObject.GetComponent<Connector>() != null)
+        {
+            --numCollisions;
+        }
     }
 }
