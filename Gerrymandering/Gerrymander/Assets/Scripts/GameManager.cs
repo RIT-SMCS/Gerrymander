@@ -85,6 +85,7 @@ public class GameManager : MonoBehaviour {
         else {
             objectHit = this.transform;
         }
+        hit.point = new Vector3(hit.point.x, 0.0f, hit.point.z);
         #endregion
         #region left click
         if (Input.GetMouseButtonDown (0)) { //left click down
@@ -100,14 +101,13 @@ public class GameManager : MonoBehaviour {
             bool validConnector = true;
             if (startNode != null) {
                 UpdateConnector(tempConnector, startNode.transform.position, hit.point);
-                if (tempConnector.IsColliding())
-                {
-                    tempConnector.GetComponent<Renderer>().material.color = Color.red;
-                    validConnector = false;
-                }
-                else if (tempConnector.transform.localScale.z > maxConnectorLength)
+                if (tempConnector.transform.localScale.z > maxConnectorLength) //too long
                 {
                     tempConnector.GetComponent<Renderer>().material.color = Color.magenta;
+                    validConnector = false;
+                } else if (tempConnector.IsColliding()) //collides with other stuff
+                {
+                    tempConnector.GetComponent<Renderer>().material.color = Color.red;
                     validConnector = false;
                 }
                 else {

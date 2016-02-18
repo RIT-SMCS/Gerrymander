@@ -13,15 +13,16 @@ public class Unit : MonoBehaviour {
         switch (affiliation)
         {
             case Affiliation.Red:
-                this.GetComponent<Renderer>().material.color = Color.red;
+                this.GetComponent<Renderer>().sharedMaterial.color = Color.red;
                 break;
             case Affiliation.Green:
-                this.GetComponent<Renderer>().material.color = Color.green;
+                this.GetComponent<Renderer>().sharedMaterial.color = Color.green;
                 break;
             case Affiliation.Blue:
-                this.GetComponent<Renderer>().material.color = Color.cyan;
+                this.GetComponent<Renderer>().sharedMaterial.color = Color.cyan;
                 break;
         }
+            
 	}
 }
 
