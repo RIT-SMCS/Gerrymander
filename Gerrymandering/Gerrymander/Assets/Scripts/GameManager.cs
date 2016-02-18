@@ -149,10 +149,29 @@ public class GameManager : MonoBehaviour {
         //after input calculate districts 
         if(connectors.Count > 2 && districts.Count < 10)
         {
-            foreach(GameObject n in nodes)
+            Dictionary<Node, List<Node>> map = CreateAdjMap();
+            foreach (GameObject n in nodes)
             {
-                checkForDistricts(n.GetComponent<Node>());
-                Debug.Log("Number of Districts: " + districts.Count);
+                List<Node> path = GetPath(map, n.GetComponent<Node>());
+                if (path != null)
+                {
+                    //Debug.Log(n.name + ": path found - length: " + path.Count);
+                    string str = "";
+                    foreach (Node m in path)
+                    {
+                        str += "\t->" + m.name;
+                    }
+                    //Debug.Log(str);
+                    Node[] nodeArray = path.ToArray();
+                    //TODO SARAH: LINK WITH DISTRICT CODE
+                    //nodeArray is an array of Nodes. 
+                }
+                else
+                {
+                    //Debug.Log("no path found for node: " + n.name);f
+                }
+                break;
+                //Debug.Log("Number of Districts: " + districts.Count);
             }
         }
         if(Input.GetKeyDown(KeyCode.C))
@@ -233,6 +252,56 @@ public class GameManager : MonoBehaviour {
 //check for win condition
 	}
     /// <summary>
+    /// http://stackoverflow.com/questions/526331/cycles-in-an-undirected-graph
+    /// hard vs soft visit
+    /// soft visit until you hit a cycle or run out of neighbors, then mark as hard.
+    /// For unlinked branches, check for nodes not contained in the hard visit graph.
+    /// </summary>
+    /// <param name="map"></param>
+    /// <param name="startNode"></param>
+    /// <returns></returns>
+    private List<Node> GetPath(Dictionary<Node, List<Node>> map, Node startNode)
+    {
+        //checkForDistricts(n.GetComponent<Node>());
+        Dictionary<Node, Node> prev = new Dictionary<Node, Node>();
+        List<Node> visited = new List<Node>();
+        //Queue<Node> queue = new Queue<Node>();
+        Stack<Node> stack = new Stack<Node>();
+        stack.Push(startNode);
+        prev[startNode] = null;
+        //start breadth-first
+        while (stack.Count > 0)
+        {
+            Node curr = stack.Pop(); // get current node
+            visited.Add(curr);  //add to visited
+            foreach (Node neighbor in map[curr]) //check currents neighbors
+            {
+                if (neighbor == startNode && prev[curr] != startNode) //if a neighbor is my start node and I've seen enough nodes to maybe have a path
+                {
+                    List<Node> path = new List<Node>();
+                    Node temp = curr;
+                    while (temp != startNode)
+                    {
+                        path.Add(temp);
+                        temp = prev[temp];
+                    }
+                    if (path.Count < 2) //too short
+                    {
+                        continue;
+                    }
+                    path.Add(startNode);
+                    return path;
+                }
+                if (!visited.Contains(neighbor)) //if i've already been to the neighbor, skip
+                {
+                    prev[neighbor] = curr; //set the neighbors previous node to be the current node
+                    stack.Push(neighbor); //add the neighbor to the queue
+                }
+            }
+        }
+        return null; //found no path, return null
+    }
+    /// <summary>
     /// Updates the position and shape of a Connector to fit between the two given points
     /// </summary>
     /// <param name="c"></param>
@@ -312,24 +381,29 @@ public class GameManager : MonoBehaviour {
     }
 
 
-    int[,] createAdjMatrix(List<Connector> _connectors)
+    Dictionary<Node, List<Node>> CreateAdjMap()
     {
-        int[,] m = new int[_connectors.Count, _connectors.Count];
-        for (int i = 0; i < _connectors.Count; i++)
+        Dictionary<Node, List<Node>> map = new Dictionary<Node, List<Node>>();
+        foreach (GameObject go in nodes)
         {
-            for (int j = 0; j < _connectors.Count; j++)
+            map[go.GetComponent<Node>()] = new List<Node>();
+        }
+        foreach (Connector c in connectors)
+        {
+            if (!map.ContainsKey(c.A))
             {
-                if (_connectors[i] != _connectors[j])
-                {
-                    if (_connectors[i].B == _connectors[j].A || _connectors[i].B == _connectors[j].B)
-                        m[i, j] = 1;
-                    else
-                        m[i, j] = 0;
-                }
+                map[c.A] = new List<Node>();
             }
+            map[c.A].Add(c.B);
+
+            if (!map.ContainsKey(c.B))
+            {
+                map[c.B] = new List<Node>();
+            }
+            map[c.B].Add(c.A);
         }
 
-        return m;
+        return map;
     }    
 }
 
