@@ -261,6 +261,7 @@ public class GameManager : MonoBehaviour {
         Queue<Node> active = new Queue<Node>();
         Node first = n;
         active.Enqueue(n);
+        List<Connector> loop = new List<Connector>();
         while(active.Count != 0)
         {
             Node temp = active.Dequeue();
@@ -274,11 +275,13 @@ public class GameManager : MonoBehaviour {
                 {
                     if(c.A != temp)
                     {
+                        loop.Add(c);
                         active.Enqueue(c.A);
                         c.isVisited = true;
                     }
                     else
                     {
+                        loop.Add(c);
                         active.Enqueue(c.B);
                         c.isVisited = true;
                     }
