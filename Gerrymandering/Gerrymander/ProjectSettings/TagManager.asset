@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Sphere
   - Unit
+  - Node
   layers:
   - Default
   - TransparentFX

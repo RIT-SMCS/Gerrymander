@@ -7,7 +7,7 @@ using UnityEngine;
 public enum Affiliation { Red = 0, Blue = 1, Green = 2, };
 public class GameManager : MonoBehaviour {
     public GameObject uiCanvas;
-    List<Node> nodes;
+    GameObject[] nodes;
     List<Connector> connectors;
     List<Unit> units;
     List<District> districts;
@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        nodes = new List<Node>();
+        nodes = GameObject.FindGameObjectsWithTag("Node");
         connectors = new List<Connector>();
         units = new List<Unit>();
         districts = new List<District>();
@@ -147,6 +147,22 @@ public class GameManager : MonoBehaviour {
 
         //mouse / touch input (raycasts)
         //after input calculate districts 
+        if(connectors.Count > 2 && districts.Count < 10)
+        {
+            foreach(GameObject n in nodes)
+            {
+                checkForDistricts(n.GetComponent<Node>());
+                Debug.Log("Number of Districts: " + districts.Count);
+            }
+        }
+        if(Input.GetKeyDown(KeyCode.C))
+        {
+            Debug.Log("Connectors: " + connectors.Count);
+        }
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            Debug.Log("Nodes: " + nodes.Length);
+        }
         //do not make connectors if there is no valid district made
 
         //update GUI
@@ -258,6 +274,7 @@ public class GameManager : MonoBehaviour {
 
     void checkForDistricts(Node n)
     {
+        Debug.Log(n);
         Queue<Node> active = new Queue<Node>();
         Node first = n;
         active.Enqueue(n);
