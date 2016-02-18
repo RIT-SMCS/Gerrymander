@@ -33,12 +33,12 @@ public class UIManager : MonoBehaviour {
         textDict.Add(Ind, IndText);
 	}
 	
-    public void setText(GameObject obj, string newText)
+    public void SetText(GameObject obj, string newText)
     {
         textDict[obj].text = newText;
     }
 
-    public void showVictory()
+    public void ShowVictory()
     {
         if (solved)
         {
@@ -47,6 +47,11 @@ public class UIManager : MonoBehaviour {
             victory.transform.localPosition = new Vector3(0, 0, 0);
         }
         solved = true;
+    }
+
+    public void ClearClicked()
+    {
+        gameManager.ClearConnections();
     }
 
 	// Update is called once per frame

@@ -14,7 +14,7 @@ GameObject:
   - 114: {fileID: 11494194}
   m_Layer: 0
   m_Name: ConnectorPrefab
-  m_TagString: Untagged
+  m_TagString: Connector
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -89,13 +89,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   A: {fileID: 0}
   B: {fileID: 0}
+  isVisited: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_TagString
+      value: Connector
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 162244}

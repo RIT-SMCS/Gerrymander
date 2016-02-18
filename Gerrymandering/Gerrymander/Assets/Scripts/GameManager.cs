@@ -150,7 +150,7 @@ public class GameManager : MonoBehaviour {
         //update GUI
         #region checkDistricts
         int unitsInDistricts = 0;
-        uiManager.setText(uiManager.Pop, unitsInDistricts + "/" + units.Count + " in district");
+        uiManager.SetText(uiManager.Pop, unitsInDistricts + "/" + units.Count + " in district");
         string winner = "blah" ;
         if (winningTeam == Affiliation.Blue)
         {
@@ -161,8 +161,8 @@ public class GameManager : MonoBehaviour {
             winner = "Reps";
         }
         else winner = "Inds";
-        uiManager.setText(uiManager.Goal, goalDistricts + " Districts, " + winner + " Win" );
-        uiManager.setText(uiManager.District, currentDistricts + "/" + goalDistricts + " Districts");
+        uiManager.SetText(uiManager.Goal, goalDistricts + " Districts, " + winner + " Win" );
+        uiManager.SetText(uiManager.District, currentDistricts + "/" + goalDistricts + " Districts");
         currentBlue = currentGreen = currentRed = 0;
         foreach (District dist in districts)
         {
@@ -199,13 +199,13 @@ public class GameManager : MonoBehaviour {
         {
             switch (party){
                 case (int)Affiliation.Red:
-                    uiManager.setText(uiManager.GOP, currentRed + "/" + totalRed + " Rep");
+                    uiManager.SetText(uiManager.GOP, currentRed + "/" + totalRed + " Rep");
                     break;
                 case (int)Affiliation.Blue:
-                    uiManager.setText(uiManager.Dem, currentBlue + "/" + totalBlue + " Dem");
+                    uiManager.SetText(uiManager.Dem, currentBlue + "/" + totalBlue + " Dem");
                     break;
                 case (int)Affiliation.Green:
-                    uiManager.setText(uiManager.Ind, currentGreen + "/" + totalGreen + " Ind");
+                    uiManager.SetText(uiManager.Ind, currentGreen + "/" + totalGreen + " Ind");
                     break;
                 default:
                     break;
@@ -218,7 +218,7 @@ public class GameManager : MonoBehaviour {
 
         if(goalMet)
         {
-            uiManager.showVictory();
+            uiManager.ShowVictory();
         }
 	}
     /// <summary>
@@ -231,6 +231,17 @@ public class GameManager : MonoBehaviour {
         c.transform.position = 0.5f * (initPoint + endPoint);
         c.transform.forward = initPoint - endPoint;
         c.transform.localScale = new Vector3(0.5f, 0.5f, 0.9f * (initPoint - endPoint).magnitude);
+    }
+
+
+    public void ClearConnections()
+    {
+
+        while (connectors.Count > 0)
+        {
+            Destroy(connectors[connectors.Count - 1].gameObject);
+            connectors.RemoveAt(connectors.Count - 1);
+        }
     }
 
     void checkForDistricts(Node first, Node curr)
