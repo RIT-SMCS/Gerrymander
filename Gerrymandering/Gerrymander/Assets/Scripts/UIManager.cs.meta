@@ -1,10 +1,18 @@
 fileFormatVersion: 2
 guid: 994aa91a839eee74386a6efb5f9defb5
-timeCreated: 1454601985
-licenseType: Free
+timeCreated: 1455817272
+licenseType: Pro
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - gmObj: {instanceID: 0}
+  - Goal: {instanceID: 0}
+  - Pop: {instanceID: 0}
+  - District: {instanceID: 0}
+  - GOP: {instanceID: 0}
+  - Dem: {instanceID: 0}
+  - Ind: {instanceID: 0}
+  - winPrefab: {fileID: 188450, guid: 6842afcc378e0c843a04861333791deb, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -143,8 +143,6 @@ public class GameManager : MonoBehaviour {
         #endregion
         //end raycast
 
-
-
         //mouse / touch input (raycasts)
         //after input calculate districts 
         //do not make connectors if there is no valid district made
@@ -214,7 +212,14 @@ public class GameManager : MonoBehaviour {
             }
         }
         #endregion
-//check for win condition
+        //check for win condition
+
+        bool goalMet = currentDistricts == goalDistricts && partyDistricts[(int)winningTeam] == Mathf.RoundToInt((goalDistricts / 2.0f) + 1);
+
+        if(goalMet)
+        {
+            uiManager.showVictory();
+        }
 	}
     /// <summary>
     /// Updates the position and shape of a Connector to fit between the two given points
