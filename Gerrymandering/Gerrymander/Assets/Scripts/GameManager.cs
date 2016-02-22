@@ -7,7 +7,7 @@ using UnityEngine;
 public enum Affiliation { Red = 0, Blue = 1, Green = 2, };
 public class GameManager : MonoBehaviour {
     public GameObject uiCanvas;
-    List<Node> nodes;
+    GameObject[] nodes;
     List<Connector> connectors;
     List<Unit> units;
     List<District> districts;
@@ -22,13 +22,15 @@ public class GameManager : MonoBehaviour {
 
     //Dictionary<Affiliation, int> partyDistricts;
     public Connector connectorPrefab;
+    public float maxConnectorLength = 5.0f;
 
-	private Node startNode = null;
+
+    private Node startNode = null;
     private Connector tempConnector = null;
 
 	// Use this for initialization
 	void Start () {
-        nodes = new List<Node>();
+        nodes = GameObject.FindGameObjectsWithTag("Node");
         connectors = new List<Connector>();
         units = new List<Unit>();
         districts = new List<District>();
@@ -83,6 +85,7 @@ public class GameManager : MonoBehaviour {
         else {
             objectHit = this.transform;
         }
+        hit.point = new Vector3(hit.point.x, 0.0f, hit.point.z);
         #endregion
         #region left click
         if (Input.GetMouseButtonDown (0)) { //left click down
@@ -95,12 +98,24 @@ public class GameManager : MonoBehaviour {
                 tempConnector.GetComponent<Renderer>().material.color = Color.green;
             }
 		} else if (Input.GetMouseButton(0)) { // left click drag    
+            bool validConnector = true;
             if (startNode != null) {
                 UpdateConnector(tempConnector, startNode.transform.position, hit.point);
-                tempConnector.GetComponent<Renderer>().material.color = Color.green;
+                if (tempConnector.transform.localScale.z > maxConnectorLength) //too long
+                {
+                    tempConnector.GetComponent<Renderer>().material.color = Color.magenta;
+                    validConnector = false;
+                } else if (tempConnector.IsColliding()) //collides with other stuff
+                {
+                    tempConnector.GetComponent<Renderer>().material.color = Color.red;
+                    validConnector = false;
+                }
+                else {
+                    tempConnector.GetComponent<Renderer>().material.color = Color.green;
+                }
             }
             // working click through
-            for (Node endNode = objectHit.GetComponent<Node>(); startNode != null && endNode != null && startNode != endNode; ) {
+            for (Node endNode = objectHit.GetComponent<Node>(); startNode != null && endNode != null && startNode != endNode && validConnector; ) {
                 Connector c = (Connector)Instantiate(connectorPrefab);
                 c.A = startNode;
                 c.B = endNode;
@@ -145,6 +160,41 @@ public class GameManager : MonoBehaviour {
 
         //mouse / touch input (raycasts)
         //after input calculate districts 
+        if(connectors.Count > 2 && districts.Count < 10)
+        {
+            Dictionary<Node, List<Node>> map = CreateAdjMap();
+            foreach (GameObject n in nodes)
+            {
+                List<Node> path = GetPath(map, n.GetComponent<Node>());
+                if (path != null)
+                {
+                    //Debug.Log(n.name + ": path found - length: " + path.Count);
+                    string str = "";
+                    foreach (Node m in path)
+                    {
+                        str += "\t->" + m.name;
+                    }
+                    //Debug.Log(str);
+                    Node[] nodeArray = path.ToArray();
+                    //TODO SARAH: LINK WITH DISTRICT CODE
+                    //nodeArray is an array of Nodes. 
+                }
+                else
+                {
+                    //Debug.Log("no path found for node: " + n.name);f
+                }
+                break;
+                //Debug.Log("Number of Districts: " + districts.Count);
+            }
+        }
+        if(Input.GetKeyDown(KeyCode.C))
+        {
+            Debug.Log("Connectors: " + connectors.Count);
+        }
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            Debug.Log("Nodes: " + nodes.Length);
+        }
         //do not make connectors if there is no valid district made
 
         //update GUI
@@ -222,6 +272,56 @@ public class GameManager : MonoBehaviour {
         }
 	}
     /// <summary>
+    /// http://stackoverflow.com/questions/526331/cycles-in-an-undirected-graph
+    /// hard vs soft visit
+    /// soft visit until you hit a cycle or run out of neighbors, then mark as hard.
+    /// For unlinked branches, check for nodes not contained in the hard visit graph.
+    /// </summary>
+    /// <param name="map"></param>
+    /// <param name="startNode"></param>
+    /// <returns></returns>
+    private List<Node> GetPath(Dictionary<Node, List<Node>> map, Node startNode)
+    {
+        //checkForDistricts(n.GetComponent<Node>());
+        Dictionary<Node, Node> prev = new Dictionary<Node, Node>();
+        List<Node> visited = new List<Node>();
+        //Queue<Node> queue = new Queue<Node>();
+        Stack<Node> stack = new Stack<Node>();
+        stack.Push(startNode);
+        prev[startNode] = null;
+        //start breadth-first
+        while (stack.Count > 0)
+        {
+            Node curr = stack.Pop(); // get current node
+            visited.Add(curr);  //add to visited
+            foreach (Node neighbor in map[curr]) //check currents neighbors
+            {
+                if (neighbor == startNode && prev[curr] != startNode) //if a neighbor is my start node and I've seen enough nodes to maybe have a path
+                {
+                    List<Node> path = new List<Node>();
+                    Node temp = curr;
+                    while (temp != startNode)
+                    {
+                        path.Add(temp);
+                        temp = prev[temp];
+                    }
+                    if (path.Count < 2) //too short
+                    {
+                        continue;
+                    }
+                    path.Add(startNode);
+                    return path;
+                }
+                if (!visited.Contains(neighbor)) //if i've already been to the neighbor, skip
+                {
+                    prev[neighbor] = curr; //set the neighbors previous node to be the current node
+                    stack.Push(neighbor); //add the neighbor to the queue
+                }
+            }
+        }
+        return null; //found no path, return null
+    }
+    /// <summary>
     /// Updates the position and shape of a Connector to fit between the two given points
     /// </summary>
     /// <param name="c"></param>
@@ -230,9 +330,10 @@ public class GameManager : MonoBehaviour {
     private void UpdateConnector(Connector c, Vector3 initPoint, Vector3 endPoint) {
         c.transform.position = 0.5f * (initPoint + endPoint);
         c.transform.forward = initPoint - endPoint;
-        c.transform.localScale = new Vector3(0.5f, 0.5f, 0.9f * (initPoint - endPoint).magnitude);
+        c.transform.localScale = new Vector3(0.2f, 0.2f, 0.95f * (initPoint - endPoint).magnitude-1.0f);
     }
 
+<<<<<<< HEAD
 
     public void ClearConnections()
     {
@@ -253,57 +354,99 @@ public class GameManager : MonoBehaviour {
             return;
         }
         for(int i = 0; i < curr.GetConnectors().Count; i++)
+=======
+    //void checkForDistricts(Node first, Node curr)
+    //{        
+    //    //int[,] matrix = createAdjMatrix(connectors);
+    //    if(curr == first)
+    //    {
+    //        districts.Add(new District());
+    //        return;
+    //    }
+    //    for(int i = 0; i < curr.GetConnectors().Count; i++)
+    //    {
+    //        if (!curr.GetConnectors()[i].isVisited)
+    //        {
+    //            if (curr.GetConnectors()[i].A != curr)
+    //            {
+    //                curr.GetConnectors()[i].isVisited = true;
+    //                checkForDistricts(first, curr.GetConnectors()[i].A);
+    //                curr.GetConnectors()[i].isVisited = false;
+    //            }
+    //            else
+    //            {
+    //                curr.GetConnectors()[i].isVisited = true;
+    //                checkForDistricts(first, curr.GetConnectors()[i].B);
+    //                curr.GetConnectors()[i].isVisited = false;
+    //            }
+    //        }
+    //    }               
+    //}
+
+    void checkForDistricts(Node n)
+    {
+        Debug.Log(n);
+        Queue<Node> active = new Queue<Node>();
+        Node first = n;
+        active.Enqueue(n);
+        List<Connector> loop = new List<Connector>();
+        while(active.Count != 0)
+>>>>>>> master
         {
-            if (!curr.GetConnectors()[i].isVisited)
+            Node temp = active.Dequeue();
+            if(temp == first)
             {
-                if (curr.GetConnectors()[i].A != curr)
+                districts.Add(new District());
+            }
+            foreach(Connector c in temp.GetConnectors())
+            {
+                if(!c.isVisited)
                 {
-                    curr.GetConnectors()[i].isVisited = true;
-                    checkForDistricts(first, curr.GetConnectors()[i].A);
-                    curr.GetConnectors()[i].isVisited = false;
-                }
-                else
-                {
-                    curr.GetConnectors()[i].isVisited = true;
-                    checkForDistricts(first, curr.GetConnectors()[i].B);
-                    curr.GetConnectors()[i].isVisited = false;
+                    if(c.A != temp)
+                    {
+                        loop.Add(c);
+                        active.Enqueue(c.A);
+                        c.isVisited = true;
+                    }
+                    else
+                    {
+                        loop.Add(c);
+                        active.Enqueue(c.B);
+                        c.isVisited = true;
+                    }
                 }
             }
         }
-        //for (int i = 0; i < connectors.Count; i++)
-        //{
-        //    if(curr != connectors[i])
-        //    {
-        //        if(curr.B == connectors[i].A || curr.B == connectors[i].B)
-        //        {
-        //            next = connectors[i];
-        //            if (connectors[i].A == first || connectors[i].B == first)
-        //                districts.Add(new District());
-        //            else
-        //                checkForDistricts(first, next);
-        //        }
-        //    }       
-        //}        
+        foreach(Connector c in connectors)
+        {
+            c.isVisited = false;
+        }
     }
 
-    int[,] createAdjMatrix(List<Connector> _connectors)
+
+    Dictionary<Node, List<Node>> CreateAdjMap()
     {
-        int[,] m = new int[_connectors.Count, _connectors.Count];
-        for (int i = 0; i < _connectors.Count; i++)
+        Dictionary<Node, List<Node>> map = new Dictionary<Node, List<Node>>();
+        foreach (GameObject go in nodes)
         {
-            for (int j = 0; j < _connectors.Count; j++)
+            map[go.GetComponent<Node>()] = new List<Node>();
+        }
+        foreach (Connector c in connectors)
+        {
+            if (!map.ContainsKey(c.A))
             {
-                if (_connectors[i] != _connectors[j])
-                {
-                    if (_connectors[i].B == _connectors[j].A || _connectors[i].B == _connectors[j].B)
-                        m[i, j] = 1;
-                    else
-                        m[i, j] = 0;
-                }
+                map[c.A] = new List<Node>();
             }
+            map[c.A].Add(c.B);
+
+            if (!map.ContainsKey(c.B))
+            {
+                map[c.B] = new List<Node>();
+            }
+            map[c.B].Add(c.A);
         }
 
-        return m;
+        return map;
     }    
 }
 

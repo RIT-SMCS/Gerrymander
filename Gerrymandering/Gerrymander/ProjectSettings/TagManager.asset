@@ -6,7 +6,11 @@ TagManager:
   tags:
   - Sphere
   - Unit
+<<<<<<< HEAD
   - Connector
+=======
+  - Node
+>>>>>>> master
   layers:
   - Default
   - TransparentFX
