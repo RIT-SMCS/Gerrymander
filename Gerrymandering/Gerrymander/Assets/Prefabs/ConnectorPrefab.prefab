@@ -114,10 +114,8 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 0}
-<<<<<<< HEAD
       propertyPath: m_TagString
       value: Connector
-=======
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
@@ -128,7 +126,6 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_Constraints
       value: 126
->>>>>>> master
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

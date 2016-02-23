@@ -333,7 +333,7 @@ public class GameManager : MonoBehaviour {
         c.transform.localScale = new Vector3(0.2f, 0.2f, 0.95f * (initPoint - endPoint).magnitude-1.0f);
     }
 
-<<<<<<< HEAD
+
 
     public void ClearConnections()
     {
@@ -345,16 +345,17 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    void checkForDistricts(Node first, Node curr)
-    {        
+    #region deprecated code
+    /*void checkForDistricts(Node first, Node curr)
+    {
         //int[,] matrix = createAdjMatrix(connectors);
-        if(curr == first)
+        if (curr == first)
         {
             districts.Add(new District());
             return;
         }
-        for(int i = 0; i < curr.GetConnectors().Count; i++)
-=======
+        for (int i = 0; i < curr.GetConnectors().Count; i++)
+    }*/
     //void checkForDistricts(Node first, Node curr)
     //{        
     //    //int[,] matrix = createAdjMatrix(connectors);
@@ -391,7 +392,6 @@ public class GameManager : MonoBehaviour {
         active.Enqueue(n);
         List<Connector> loop = new List<Connector>();
         while(active.Count != 0)
->>>>>>> master
         {
             Node temp = active.Dequeue();
             if(temp == first)
@@ -422,7 +422,7 @@ public class GameManager : MonoBehaviour {
             c.isVisited = false;
         }
     }
-
+#endregion
 
     Dictionary<Node, List<Node>> CreateAdjMap()
     {
