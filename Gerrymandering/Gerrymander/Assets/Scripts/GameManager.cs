@@ -198,9 +198,9 @@ public class GameManager : MonoBehaviour {
         //do not make connectors if there is no valid district made
 
         //update GUI
-        #region checkDistricts
+        #region Setting Text
         int unitsInDistricts = 0;
-        uiManager.SetText(uiManager.Pop, unitsInDistricts + "/" + units.Count + " in district");
+        uiManager.SetText(uiManager.Pop, unitsInDistricts + "/" + units.Count + " per\nDistrict");
         string winner = "blah" ;
         if (winningTeam == Affiliation.Blue)
         {
@@ -211,8 +211,8 @@ public class GameManager : MonoBehaviour {
             winner = "Reps";
         }
         else winner = "Inds";
-        uiManager.SetText(uiManager.Goal, goalDistricts + " Districts, " + winner + " Win" );
-        uiManager.SetText(uiManager.District, currentDistricts + "/" + goalDistricts + " Districts");
+        uiManager.SetText(uiManager.Goal, goalDistricts + " Districts\n" + winner + " Win" );
+        uiManager.SetText(uiManager.District, currentDistricts + "/" + goalDistricts + "\nDistricts");
         currentBlue = currentGreen = currentRed = 0;
         foreach (District dist in districts)
         {
