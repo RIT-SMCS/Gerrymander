@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 //awful coding practice.
 //change colors for color-blind people
 public enum Affiliation { Red = 0, Blue = 1, Green = 2, };
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
     public GameObject uiCanvas;
     GameObject[] nodes;
     List<Connector> connectors;
@@ -28,16 +30,37 @@ public class GameManager : MonoBehaviour {
     private Node startNode = null;
     private Connector tempConnector = null;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
+        int[,] graph =
+            {
+                {1, 2}, {1, 3}, {1, 4}, {2, 3},
+                {3, 4}, {2, 6}, {4, 6}, {7, 8},
+                {8, 9}, {9, 7}
+            };
+        string str = "";
+        for (int i = 0; i < graph.GetLength(0); ++i)
+        {
+            for (int j = 0; j < graph.GetLength(1); ++j)
+            {
+                str += graph[i, j];
+            }
+            str += "\n";
+        }
+        Debug.Log(str);
+
+
         nodes = GameObject.FindGameObjectsWithTag("Node");
         connectors = new List<Connector>();
         units = new List<Unit>();
         districts = new List<District>();
         GameObject[] unitPrefabs = GameObject.FindGameObjectsWithTag("Unit");
-        foreach (GameObject obj in unitPrefabs) {
+        foreach (GameObject obj in unitPrefabs)
+        {
             units.Add(obj.GetComponent<Unit>());
-            switch (units[units.Count - 1].affiliation) {
+            switch (units[units.Count - 1].affiliation)
+            {
                 case Affiliation.Blue:
                     totalBlue += 1;
                     break;
@@ -49,11 +72,11 @@ public class GameManager : MonoBehaviour {
                     break;
                 default:
                     break;
-            
+
             }
         }
         //partyDistricts[(int)Affiliation.Red]++;	
-        if(uiCanvas != null)
+        if (uiCanvas != null)
         {
             uiManager = uiCanvas.GetComponent<UIManager>();
         }
@@ -67,19 +90,22 @@ public class GameManager : MonoBehaviour {
         GameObject backgroundPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
         backgroundPlane.transform.position = Vector3.zero;
         backgroundPlane.transform.localScale = new Vector3(10.0f, 10.0f, 10.0f);
-        for (MeshRenderer mr = backgroundPlane.GetComponent<MeshRenderer>(); mr != null; mr = null){
+        for (MeshRenderer mr = backgroundPlane.GetComponent<MeshRenderer>(); mr != null; mr = null)
+        {
             mr.enabled = false;
         }
         backgroundPlane.name = "Background Plane";
-	}
+    }
 
-	// Update is called once per frame
-	void Update () {
+    // Update is called once per frame
+    void Update()
+    {
         #region mouse raycast
         RaycastHit hit;
-		Transform objectHit = null;
-		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-        if (Physics.Raycast(ray, out hit)) {
+        Transform objectHit = null;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit))
+        {
             objectHit = hit.transform;
         }
         else {
@@ -88,24 +114,30 @@ public class GameManager : MonoBehaviour {
         hit.point = new Vector3(hit.point.x, 0.0f, hit.point.z);
         #endregion
         #region left click
-        if (Input.GetMouseButtonDown (0)) { //left click down
-			Debug.Log ("click");
-			if ((startNode = objectHit.GetComponent<Node> ()) != null) {
+        if (Input.GetMouseButtonDown(0))
+        { //left click down
+            Debug.Log("click");
+            if ((startNode = objectHit.GetComponent<Node>()) != null)
+            {
                 tempConnector = (Connector)Instantiate(connectorPrefab);
                 tempConnector.transform.localScale = Vector3.zero;
                 tempConnector.transform.SetParent(this.transform);
                 tempConnector.name = "dragged connector";
                 tempConnector.GetComponent<Renderer>().material.color = Color.green;
             }
-		} else if (Input.GetMouseButton(0)) { // left click drag    
+        }
+        else if (Input.GetMouseButton(0))
+        { // left click drag    
             bool validConnector = true;
-            if (startNode != null) {
+            if (startNode != null)
+            {
                 UpdateConnector(tempConnector, startNode.transform.position, hit.point);
                 if (tempConnector.transform.localScale.z > maxConnectorLength) //too long
                 {
                     tempConnector.GetComponent<Renderer>().material.color = Color.magenta;
                     validConnector = false;
-                } else if (tempConnector.IsColliding()) //collides with other stuff
+                }
+                else if (tempConnector.IsColliding()) //collides with other stuff
                 {
                     tempConnector.GetComponent<Renderer>().material.color = Color.red;
                     validConnector = false;
@@ -115,11 +147,13 @@ public class GameManager : MonoBehaviour {
                 }
             }
             // working click through
-            for (Node endNode = objectHit.GetComponent<Node>(); startNode != null && endNode != null && startNode != endNode && validConnector; ) {
+            for (Node endNode = objectHit.GetComponent<Node>(); startNode != null && endNode != null && startNode != endNode && validConnector;)
+            {
                 Connector c = (Connector)Instantiate(connectorPrefab);
                 c.A = startNode;
                 c.B = endNode;
-                if (connectors.Contains(c)) {
+                if (connectors.Contains(c))
+                {
                     //Debug.Log("Nodes already connected");
                     Destroy(c.gameObject);
                     tempConnector.GetComponent<Renderer>().material.color = Color.red;
@@ -132,28 +166,35 @@ public class GameManager : MonoBehaviour {
                     startNode = endNode;
                 }
                 break;
-            } 
+            }
         }
-        else if (Input.GetMouseButtonUp(0)) {//left click up
-			Debug.Log("Release");
-            if (tempConnector != null) {
+        else if (Input.GetMouseButtonUp(0))
+        {//left click up
+            Debug.Log("Release");
+            if (tempConnector != null)
+            {
                 Destroy(tempConnector.gameObject);
                 tempConnector = null;
             }
         }
         #endregion
         #region right click
-        if (Input.GetMouseButtonDown(1)) { //right click down
+        if (Input.GetMouseButtonDown(1))
+        { //right click down
             Debug.Log("click");
-            for (Connector ctr = objectHit.GetComponent<Connector>(); ctr != null;) {
+            for (Connector ctr = objectHit.GetComponent<Connector>(); ctr != null;)
+            {
                 Debug.Log("Removing conenector");
                 connectors.Remove(ctr);
                 Destroy(ctr.gameObject);
                 break;
             }
-        } if (Input.GetMouseButton(1)) { // right click drag    
         }
-        else if (Input.GetMouseButtonUp(1)) {//right click up
+        if (Input.GetMouseButton(1))
+        { // right click drag    
+        }
+        else if (Input.GetMouseButtonUp(1))
+        {//right click up
         }
         #endregion
         //end raycast
@@ -162,7 +203,7 @@ public class GameManager : MonoBehaviour {
 
         //mouse / touch input (raycasts)
         //after input calculate districts 
-        if(connectors.Count > 2 && districts.Count < 10)
+        if (connectors.Count > 2 && districts.Count < 10)
         {
             Dictionary<Node, List<Node>> map = CreateAdjMap();
             foreach (GameObject n in nodes)
@@ -189,7 +230,7 @@ public class GameManager : MonoBehaviour {
                 //Debug.Log("Number of Districts: " + districts.Count);
             }
         }
-        if(Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.C))
         {
             Debug.Log("Connectors: " + connectors.Count);
         }
@@ -203,7 +244,7 @@ public class GameManager : MonoBehaviour {
         #region checkDistricts
         int unitsInDistricts = 0;
         uiManager.setText(uiManager.Pop, unitsInDistricts + "/" + units.Count + " in district");
-        string winner = "blah" ;
+        string winner = "blah";
         if (winningTeam == Affiliation.Blue)
         {
             winner = "Dems";
@@ -213,7 +254,7 @@ public class GameManager : MonoBehaviour {
             winner = "Reps";
         }
         else winner = "Inds";
-        uiManager.setText(uiManager.Goal, goalDistricts + " Districts, " + winner + " Win" );
+        uiManager.setText(uiManager.Goal, goalDistricts + " Districts, " + winner + " Win");
         uiManager.setText(uiManager.District, currentDistricts + "/" + goalDistricts + " Districts");
         currentBlue = currentGreen = currentRed = 0;
         foreach (District dist in districts)
@@ -226,14 +267,14 @@ public class GameManager : MonoBehaviour {
                 case Affiliation.Blue:
                     partyDistricts[1] += 1;
                     break;
-                 case Affiliation.Green:
+                case Affiliation.Green:
                     partyDistricts[2] += 1;
                     break;
             }
 
             foreach (Unit voter in dist.GetMembers())
             {
-                switch(voter.affiliation)
+                switch (voter.affiliation)
                 {
                     case Affiliation.Red:
                         currentRed += 1;
@@ -247,9 +288,10 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
-        foreach(int party in partyDistricts)
+        foreach (int party in partyDistricts)
         {
-            switch (party){
+            switch (party)
+            {
                 case (int)Affiliation.Red:
                     uiManager.setText(uiManager.GOP, currentRed + "/" + totalRed + " Rep");
                     break;
@@ -264,13 +306,19 @@ public class GameManager : MonoBehaviour {
             }
         }
         #endregion
-//check for win condition
-	}
+        //check for win condition
+    }
     /// <summary>
     /// http://stackoverflow.com/questions/526331/cycles-in-an-undirected-graph
     /// hard vs soft visit
     /// soft visit until you hit a cycle or run out of neighbors, then mark as hard.
     /// For unlinked branches, check for nodes not contained in the hard visit graph.
+    /// 
+    /// professional research paper on the subject
+    /// http://arxiv.org/pdf/1205.2766.pdf
+    /// naive implementation of paper alg in c# and java
+    /// http://stackoverflow.com/questions/12367801/finding-all-cycles-in-undirected-graphs
+    ///     
     /// </summary>
     /// <param name="map"></param>
     /// <param name="startNode"></param>
@@ -322,10 +370,11 @@ public class GameManager : MonoBehaviour {
     /// <param name="c"></param>
     /// <param name="initPoint"></param>
     /// <param name="endPoint"></param>
-    private void UpdateConnector(Connector c, Vector3 initPoint, Vector3 endPoint) {
+    private void UpdateConnector(Connector c, Vector3 initPoint, Vector3 endPoint)
+    {
         c.transform.position = 0.5f * (initPoint + endPoint);
         c.transform.forward = initPoint - endPoint;
-        c.transform.localScale = new Vector3(0.2f, 0.2f, 0.95f * (initPoint - endPoint).magnitude-1.0f);
+        c.transform.localScale = new Vector3(0.2f, 0.2f, 0.95f * (initPoint - endPoint).magnitude - 1.0f);
     }
 
     //void checkForDistricts(Node first, Node curr)
@@ -363,18 +412,18 @@ public class GameManager : MonoBehaviour {
         Node first = n;
         active.Enqueue(n);
         List<Connector> loop = new List<Connector>();
-        while(active.Count != 0)
+        while (active.Count != 0)
         {
             Node temp = active.Dequeue();
-            if(temp == first)
+            if (temp == first)
             {
                 districts.Add(new District());
             }
-            foreach(Connector c in temp.GetConnectors())
+            foreach (Connector c in temp.GetConnectors())
             {
-                if(!c.isVisited)
+                if (!c.isVisited)
                 {
-                    if(c.A != temp)
+                    if (c.A != temp)
                     {
                         loop.Add(c);
                         active.Enqueue(c.A);
@@ -389,7 +438,7 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
-        foreach(Connector c in connectors)
+        foreach (Connector c in connectors)
         {
             c.isVisited = false;
         }
@@ -419,6 +468,171 @@ public class GameManager : MonoBehaviour {
         }
 
         return map;
-    }    
+    }
+    #region Find Cycles take 2
+
+    int[,] CreateAdjMatrix()
+    {
+        int[,] matrix = new int[nodes.Length, nodes.Length];
+        foreach (Connector c in connectors)
+        {
+            matrix[c.A.ID, c.B.ID] = 1;
+            matrix[c.B.ID, c.A.ID] = 1;
+        }
+        return matrix;
+    }
+
+    int[,] CreateAdjGraph()
+    {
+        int[,] graph = new int[connectors.Count, 2];
+        for (int i = 0; i < connectors.Count; ++i)
+        {
+            graph[i, 0] = connectors[i].A.ID;
+            graph[i, 1] = connectors[i].B.ID;
+
+        }
+        return graph;
+    }
+
+    List<int[]> GetCycles()
+    {
+        int[,] adj = CreateAdjMatrix();
+        int[,] graph = CreateAdjGraph();
+        List<int[]> cycles = new List<int[]>();
+
+        for (int i = 0; i < adj.GetLength(0); ++i)
+        {
+            for (int j = 0; j < adj.GetLength(1); ++j)
+            {
+                FindNewCycles(graph, cycles, new int[] { graph[i, j] });
+            }
+        }
+        //list cycles
+        foreach (int[] c in cycles)
+        {
+            string str = "" + c[0];
+            for (int i = 0; i < c.Length; ++i)
+            {
+                str += "," + c[i];
+            }
+            Debug.Log(str);
+        }
+        return cycles;
+    }
+
+    void FindNewCycles(int[,] graph, List<int[]> cycles, int[] path)
+    {
+        int n = path[0];
+        int x;
+        int[] subPath = new int[path.Length + 1];
+
+        for (int i = 0; i < graph.GetLength(0); ++i)
+        {
+            for (int y = 0; y <= 1; ++y)
+            {
+                if (graph[i, y] == n) //current node
+                {
+                    x = graph[i, (y + 1) % 2];//???
+                    if (!IsVisited(x, path)) //havent seen node yet
+                    {
+                        subPath[0] = x;
+                        System.Array.Copy(path, 0, subPath, 1, path.Length);
+                        FindNewCycles(graph, cycles, subPath);
+                    } else if (path.Length > 2 && x == path[path.Length-1]){ //found cycle
+                        int[] normalized = Normalize(path);//normalize
+                        int[] inverted = Invert(path);//invert
+                        if (IsNew(normalized, cycles) && IsNew(inverted, cycles)) // isnew normalized and isnew inverted
+                        {
+                            cycles.Add(normalized);
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+    int FindSmallest(int[] path)
+    {
+        int min = path[0];
+        
+        foreach (int p in path)
+        {
+            if (p < min) min = p;
+        }
+
+        return min;
+    }
+
+    int[] Normalize(int[] path)
+    {
+        int[] p = new int[path.Length];
+        int x = FindSmallest(path);
+        int n;
+
+        System.Array.Copy(path, 0, p, 0, path.Length);
+
+        while(p[0] != x)
+        {
+            n = p[0];
+            System.Array.Copy(p, 1, p, 0, p.Length - 1);
+            p[p.Length - 1] = n;
+        }
+
+        return p;
+    }
+
+    int[] Invert(int[] path)
+    {
+        int[] p = new int[path.Length];
+
+        for(int i =0; i < path.Length; ++i)
+        {
+            p[i] = path[path.Length - 1 - i];
+        }
+
+        return Normalize(p);
+    }
+
+    bool Equals(int[] a, int[] b)
+    {
+        bool ret = (a[0] == b[0]) && (a.Length == b.Length);
+
+        for(int i = 1; ret && (i < a.Length); ++i)
+        {
+            if(a[i] != b[i])
+            {
+                ret = false;
+            }
+        }
+
+        return ret;
+    }
+
+    bool IsVisited(int n, int[] path)
+    {
+        foreach (int i in path)
+        {
+            if (i == n)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool IsNew(int[] path, List<int[]> cycles)
+    {
+        foreach(int[] p in cycles)
+        {
+            if(Equals(p, path))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    #endregion
 }
 
