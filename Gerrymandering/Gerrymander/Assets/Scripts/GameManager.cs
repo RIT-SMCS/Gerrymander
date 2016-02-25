@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     int goalDistricts = 3;
     int currentDistricts = 0;
     int totalRed, totalBlue, totalGreen = 0;
-    int currentRed, currentBlue, currentGreen = 0;
+    int currentRed, currentBlue, currentGreen = 0;    
 
     //Dictionary<Affiliation, int> partyDistricts;
     public Connector connectorPrefab;
@@ -203,33 +203,47 @@ public class GameManager : MonoBehaviour
 
         //mouse / touch input (raycasts)
         //after input calculate districts 
-        if (connectors.Count > 2 && districts.Count < 10)
+        //if (connectors.Count > 2 && districts.Count < 10)
+        //{
+        //    Dictionary<Node, List<Node>> map = CreateAdjMap();
+        //    foreach (GameObject n in nodes)
+        //    {
+        //        List<Node> path = GetPath(map, n.GetComponent<Node>());
+        //        if (path != null)
+        //        {
+        //            //Debug.Log(n.name + ": path found - length: " + path.Count);
+        //            string str = "";
+        //            foreach (Node m in path)
+        //            {
+        //                str += "\t->" + m.name;
+        //            }
+        //            //Debug.Log(str);
+        //            Node[] nodeArray = path.ToArray();
+        //            //TODO SARAH: LINK WITH DISTRICT CODE
+        //            //nodeArray is an array of Nodes. 
+        //        }
+        //        else
+        //        {
+        //            //Debug.Log("no path found for node: " + n.name);f
+        //        }
+        //        break;
+        //        //Debug.Log("Number of Districts: " + districts.Count);
+        //    }
+        //}
+
+        if(connectors.Count > 2)
         {
-            Dictionary<Node, List<Node>> map = CreateAdjMap();
-            foreach (GameObject n in nodes)
+            List<int[]> cycles = GetCycles(); 
+            foreach (int[] c in cycles)
             {
-                List<Node> path = GetPath(map, n.GetComponent<Node>());
-                if (path != null)
+                Debug.Log("Cycle: ");
+                foreach (int n in c)
                 {
-                    //Debug.Log(n.name + ": path found - length: " + path.Count);
-                    string str = "";
-                    foreach (Node m in path)
-                    {
-                        str += "\t->" + m.name;
-                    }
-                    //Debug.Log(str);
-                    Node[] nodeArray = path.ToArray();
-                    //TODO SARAH: LINK WITH DISTRICT CODE
-                    //nodeArray is an array of Nodes. 
+                    Debug.Log(n);
                 }
-                else
-                {
-                    //Debug.Log("no path found for node: " + n.name);f
-                }
-                break;
-                //Debug.Log("Number of Districts: " + districts.Count);
             }
         }
+
         if (Input.GetKeyDown(KeyCode.C))
         {
             Debug.Log("Connectors: " + connectors.Count);
@@ -237,6 +251,10 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.N))
         {
             Debug.Log("Nodes: " + nodes.Length);
+            foreach (GameObject n in nodes)
+            {
+               Debug.Log(n.GetComponent<Node>().ID);
+            }
         }
         //do not make connectors if there is no valid district made
 
@@ -377,6 +395,7 @@ public class GameManager : MonoBehaviour
         c.transform.localScale = new Vector3(0.2f, 0.2f, 0.95f * (initPoint - endPoint).magnitude - 1.0f);
     }
 
+    #region Find Cycles take 1
     //void checkForDistricts(Node first, Node curr)
     //{        
     //    //int[,] matrix = createAdjMatrix(connectors);
@@ -469,6 +488,8 @@ public class GameManager : MonoBehaviour
 
         return map;
     }
+    #endregion
+
     #region Find Cycles take 2
 
     int[,] CreateAdjMatrix()
@@ -476,8 +497,8 @@ public class GameManager : MonoBehaviour
         int[,] matrix = new int[nodes.Length, nodes.Length];
         foreach (Connector c in connectors)
         {
-            matrix[c.A.ID, c.B.ID] = 1;
-            matrix[c.B.ID, c.A.ID] = 1;
+            matrix[c.A.ID - 1, c.B.ID - 1] = 1;
+            matrix[c.B.ID - 1, c.A.ID - 1] = 1;
         }
         return matrix;
     }
@@ -500,10 +521,11 @@ public class GameManager : MonoBehaviour
         int[,] graph = CreateAdjGraph();
         List<int[]> cycles = new List<int[]>();
 
-        for (int i = 0; i < adj.GetLength(0); ++i)
+        for (int i = 0; i < graph.GetLength(0); ++i)
         {
-            for (int j = 0; j < adj.GetLength(1); ++j)
+            for (int j = 0; j < graph.GetLength(1); ++j)
             {
+
                 FindNewCycles(graph, cycles, new int[] { graph[i, j] });
             }
         }

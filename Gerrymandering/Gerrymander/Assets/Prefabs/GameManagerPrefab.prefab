@@ -39,14 +39,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317ae26dc3ec0bf4db0dd6ae6f6a0a38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiCanvas: {fileID: 0}
   connectorPrefab: {fileID: 11494194, guid: b3936291835e4b445978cb143b89cd8b, type: 2}
+  maxConnectorLength: 200
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: maxConnectorLength
+      value: 200
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 178802}

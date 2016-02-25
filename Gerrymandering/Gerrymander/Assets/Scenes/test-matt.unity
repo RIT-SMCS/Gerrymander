@@ -274,7 +274,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 492988, guid: 2388fc7d134653a43b7ab2586c828266, type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 11403942, guid: 2388fc7d134653a43b7ab2586c828266, type: 2}
       propertyPath: uiCanvas
