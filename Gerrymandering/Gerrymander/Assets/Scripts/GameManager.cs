@@ -13,6 +13,9 @@ public class GameManager : MonoBehaviour
     List<Connector> connectors;
     List<Unit> units;
     List<District> districts;
+    List<GameObject[]> dist; //THIS IS THE LIST OF CYCLES AS NODES. USE THIS TO MAKE DISTRICTS
+    /// </summary>
+    List<int[]> cycles;
     //number of districts each party controls
     int[] partyDistricts = new int[3];
     UIManager uiManager;
@@ -176,6 +179,7 @@ public class GameManager : MonoBehaviour
                 Destroy(tempConnector.gameObject);
                 tempConnector = null;
             }
+            checkCycles();
         }
         #endregion
         #region right click
@@ -187,6 +191,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Removing conenector");
                 connectors.Remove(ctr);
                 Destroy(ctr.gameObject);
+                checkCycles();
                 break;
             }
         }
@@ -230,20 +235,7 @@ public class GameManager : MonoBehaviour
         //        //Debug.Log("Number of Districts: " + districts.Count);
         //    }
         //}
-
-        if(connectors.Count > 2)
-        {
-            List<int[]> cycles = GetCycles(); 
-            foreach (int[] c in cycles)
-            {
-                Debug.Log("Cycle: ");
-                foreach (int n in c)
-                {
-                    Debug.Log(n);
-                }
-            }
-        }
-
+        
         if (Input.GetKeyDown(KeyCode.C))
         {
             Debug.Log("Connectors: " + connectors.Count);
@@ -394,6 +386,45 @@ public class GameManager : MonoBehaviour
         c.transform.forward = initPoint - endPoint;
         c.transform.localScale = new Vector3(0.2f, 0.2f, 0.95f * (initPoint - endPoint).magnitude - 1.0f);
     }
+
+    private void checkCycles()
+    {
+        if (connectors.Count > 2)
+        {
+            cycles = GetCycles();
+            foreach (int[] c in cycles)
+            {
+                Debug.Log("Cycle: ");
+                foreach (int n in c)
+                {
+                    Debug.Log(n);
+                }
+
+                //PAY NO ATTENTION TO THE TERRIBLE CODING
+                //THIS IS REALLY BAD AND WILL BE CHANGED LATER
+                GameObject[] d = new GameObject[cycles.Count]; //make temp array
+                for (int i = 0; i < c.Length; ++i) //loop through each cycle...
+                {
+                    for (int j = 0; j < nodes.Length; ++j) //...and compare to each node
+                    {
+                        if (nodes[j].GetComponent<Node>().ID == c[i]) //fill temp array with corresponding nodes
+                            d[i] = nodes[j];
+                    }
+                }
+                List<GameObject[]> temp = new List<GameObject[]>();
+                temp.Add(d);
+                dist = temp;               
+            }
+            foreach(GameObject[] c in dist)
+            {
+                Debug.Log("Node Cycle: ");
+                foreach(GameObject n in c)
+                {
+                    Debug.Log(n);
+                }
+            }
+        }
+    }   
 
     #region Find Cycles take 1
     //void checkForDistricts(Node first, Node curr)
