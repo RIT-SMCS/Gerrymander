@@ -297,6 +297,7 @@ MonoBehaviour:
   Dem: {fileID: 131568}
   Ind: {fileID: 116600}
   winPrefab: {fileID: 188450, guid: 6842afcc378e0c843a04861333791deb, type: 2}
+  pausePrefab: {fileID: 127426, guid: 825b26e7bef3cfc46a5721f51eadde67, type: 2}
 --- !u!114 &11402640
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1350,6 +1351,10 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: pausePrefab
+      value: 
+      objectReference: {fileID: 127426, guid: 825b26e7bef3cfc46a5721f51eadde67, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 155894}

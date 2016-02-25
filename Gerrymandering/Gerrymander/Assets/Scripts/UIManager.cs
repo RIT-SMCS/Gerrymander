@@ -9,7 +9,7 @@ public class UIManager : MonoBehaviour {
     public GameObject Goal, Pop, District, GOP, Dem, Ind;
     Text GoalText, PopText, DistrictText, GOPText, DemText, IndText;
     Dictionary<GameObject, Text> textDict;
-    public GameObject winPrefab;
+    public GameObject winPrefab, pausePrefab;
     bool solved = false;
 	// Use this for initialization
 	void Start () {
@@ -58,6 +58,30 @@ public class UIManager : MonoBehaviour {
     public void ClearClicked()
     {
         gameManager.ClearConnections();
+    }
+
+    public void ShowPauseMenu()
+    {
+        if(pausePrefab != null)
+        {
+            GameObject pauseMenu = Instantiate(pausePrefab) as GameObject;
+            pauseMenu.transform.SetParent(transform);
+            pauseMenu.transform.localPosition = new Vector3(0, 0, 0);
+            pauseMenu.transform.localScale = new Vector3(1, 1, 1);
+            pauseMenu.name = "PauseMenu";
+            Button closeBtn = pauseMenu.transform.FindChild("Button").GetComponent<Button>() as Button;
+            closeBtn.onClick.AddListener(delegate () { HidePauseMenu(); });
+        }
+    }
+
+    public void HidePauseMenu()
+    {
+        Debug.Log("Close Menu");
+
+        if (pausePrefab != null)
+        {
+            Destroy(transform.FindChild("PauseMenu").gameObject);
+        }
     }
 
 	// Update is called once per frame

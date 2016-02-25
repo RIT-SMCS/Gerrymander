@@ -1393,7 +1393,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22437814, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
       propertyPath: m_RootOrder
-      value: 33
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 22437814, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
       propertyPath: m_AnchoredPosition.x
@@ -1663,6 +1663,10 @@ Prefab:
     - target: {fileID: 11428958, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
       propertyPath: m_Color.b
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11499460, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ShowPauseMenu
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
