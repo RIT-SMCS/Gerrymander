@@ -38,6 +38,12 @@ public class UIManager : MonoBehaviour {
         textDict[obj].text = newText;
     }
 
+    public void SetColor(GameObject obj, Color color)
+    {
+        textDict[obj].color = color;
+    }
+
+
     public void ShowVictory()
     {
         if (solved)

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 //awful coding practice.
 //change colors for color-blind people
@@ -14,7 +15,7 @@ public class GameManager : MonoBehaviour {
     //number of districts each party controls
     int[] partyDistricts = new int[3];
     UIManager uiManager;
-    Affiliation winningTeam = Affiliation.Red;
+    Affiliation winningTeam = Affiliation.Blue;
     int goalDistricts = 3;
     int currentDistricts = 0;
     int totalRed, totalBlue, totalGreen = 0;
@@ -200,18 +201,26 @@ public class GameManager : MonoBehaviour {
         //update GUI
         #region Setting Text
         int unitsInDistricts = 0;
-        uiManager.SetText(uiManager.Pop, unitsInDistricts + "/" + units.Count + " per\nDistrict");
+        uiManager.SetText(uiManager.Pop, unitsInDistricts + "/" + units.Count + " in\nDistricts");
         string winner = "blah" ;
+        Color winColor = Color.white;
         if (winningTeam == Affiliation.Blue)
         {
             winner = "Dems";
+            winColor = Color.blue;
         }
         else if (winningTeam == Affiliation.Red)
         {
             winner = "Reps";
+            winColor = Color.red;
         }
-        else winner = "Inds";
+        else
+        {
+            winner = "Inds";
+            winColor = Color.green;
+        }
         uiManager.SetText(uiManager.Goal, goalDistricts + " Districts\n" + winner + " Win" );
+        uiManager.SetColor(uiManager.Goal, winColor);
         uiManager.SetText(uiManager.District, currentDistricts + "/" + goalDistricts + "\nDistricts");
         currentBlue = currentGreen = currentRed = 0;
         foreach (District dist in districts)
@@ -247,15 +256,42 @@ public class GameManager : MonoBehaviour {
         }
         foreach(int party in partyDistricts)
         {
+            GameObject panel;
             switch (party){
                 case (int)Affiliation.Red:
-                    uiManager.SetText(uiManager.GOP, currentRed + "/" + totalRed + " Rep");
+                    uiManager.SetText(uiManager.GOP, currentRed + "/" + totalRed );
+                    panel = uiManager.GOP.transform.parent.gameObject;
+                    if (currentRed == totalRed)
+                    {
+                        panel.GetComponent<Image>().fillCenter = true;
+                    } else
+                    {
+                        panel.GetComponent<Image>().fillCenter = false;
+                    }
                     break;
                 case (int)Affiliation.Blue:
-                    uiManager.SetText(uiManager.Dem, currentBlue + "/" + totalBlue + " Dem");
+                    uiManager.SetText(uiManager.Dem, currentBlue + "/" + totalBlue);
+                    panel = uiManager.Dem.transform.parent.gameObject;
+                    if (currentRed == totalRed)
+                    {
+                        panel.GetComponent<Image>().fillCenter = true;
+                    }
+                    else
+                    {
+                        panel.GetComponent<Image>().fillCenter = false;
+                    }
                     break;
                 case (int)Affiliation.Green:
-                    uiManager.SetText(uiManager.Ind, currentGreen + "/" + totalGreen + " Ind");
+                    uiManager.SetText(uiManager.Ind, currentGreen + "/" + totalGreen);
+                    panel = uiManager.Ind.transform.parent.gameObject;
+                    if (currentRed == totalRed)
+                    {
+                        panel.GetComponent<Image>().fillCenter = true;
+                    }
+                    else
+                    {
+                        panel.GetComponent<Image>().fillCenter = false;
+                    }
                     break;
                 default:
                     break;
