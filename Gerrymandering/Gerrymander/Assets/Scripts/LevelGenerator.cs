@@ -61,6 +61,10 @@ public static class LevelGenerator {
             }
         }
 
+        //OR generate random nodes. connect all exterior nodes. cut up the interior into n districts. 
+        //remove unused nodes
+        //populate districts with units
+
         //finally translate and rotate all nodes/units so that they fit on the screen.
         return lvl;
     }
