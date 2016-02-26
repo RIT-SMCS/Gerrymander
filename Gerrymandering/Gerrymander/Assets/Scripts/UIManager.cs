@@ -9,6 +9,8 @@ public class UIManager : MonoBehaviour {
     public GameObject Goal, Pop, District, GOP, Dem, Ind;
     Text GoalText, PopText, DistrictText, GOPText, DemText, IndText;
     Dictionary<GameObject, Text> textDict;
+    public GameObject winPrefab, pausePrefab;
+    bool solved = false;
 	// Use this for initialization
 	void Start () {
 	    if(gmObj != null)
@@ -31,9 +33,55 @@ public class UIManager : MonoBehaviour {
         textDict.Add(Ind, IndText);
 	}
 	
-    public void setText(GameObject obj, string newText)
+    public void SetText(GameObject obj, string newText)
     {
         textDict[obj].text = newText;
+    }
+
+    public void SetColor(GameObject obj, Color color)
+    {
+        textDict[obj].color = color;
+    }
+
+
+    public void ShowVictory()
+    {
+        if (solved)
+        {
+            GameObject victory = GameObject.Instantiate(winPrefab);
+            victory.transform.SetParent(transform);
+            victory.transform.localPosition = new Vector3(0, 0, 0);
+        }
+        solved = true;
+    }
+
+    public void ClearClicked()
+    {
+        gameManager.ClearConnections();
+    }
+
+    public void ShowPauseMenu()
+    {
+        if(pausePrefab != null)
+        {
+            GameObject pauseMenu = Instantiate(pausePrefab) as GameObject;
+            pauseMenu.transform.SetParent(transform);
+            pauseMenu.transform.localPosition = new Vector3(0, 0, 0);
+            pauseMenu.transform.localScale = new Vector3(1, 1, 1);
+            pauseMenu.name = "PauseMenu";
+            Button closeBtn = pauseMenu.transform.FindChild("Button").GetComponent<Button>() as Button;
+            closeBtn.onClick.AddListener(delegate () { HidePauseMenu(); });
+        }
+    }
+
+    public void HidePauseMenu()
+    {
+        Debug.Log("Close Menu");
+
+        if (pausePrefab != null)
+        {
+            Destroy(transform.FindChild("PauseMenu").gameObject);
+        }
     }
 
 	// Update is called once per frame

@@ -15,7 +15,7 @@ GameObject:
   - 54: {fileID: 5429508}
   m_Layer: 0
   m_Name: ConnectorPrefab
-  m_TagString: Untagged
+  m_TagString: Connector
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -114,6 +114,8 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 0}
+      propertyPath: m_TagString
+      value: Connector
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
