@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
         connectors = new List<Connector>();
         units = new List<Unit>();
         districts = new List<District>();
+        dist = new List<GameObject[]>();
         GameObject[] unitPrefabs = GameObject.FindGameObjectsWithTag("Unit");
         foreach (GameObject obj in unitPrefabs)
         {
@@ -392,6 +393,7 @@ public class GameManager : MonoBehaviour
         if (connectors.Count > 2)
         {
             cycles = GetCycles();
+            List<GameObject[]> temp = new List<GameObject[]>();
             foreach (int[] c in cycles)
             {
                 Debug.Log("Cycle: ");
@@ -399,23 +401,22 @@ public class GameManager : MonoBehaviour
                 {
                     Debug.Log(n);
                 }
-
+                
                 //PAY NO ATTENTION TO THE TERRIBLE CODING
                 //THIS IS REALLY BAD AND WILL BE CHANGED LATER
-                GameObject[] d = new GameObject[cycles.Count]; //make temp array
+                GameObject[] d = new GameObject[c.Length]; //make temp array
                 for (int i = 0; i < c.Length; ++i) //loop through each cycle...
                 {
                     for (int j = 0; j < nodes.Length; ++j) //...and compare to each node
                     {
                         if (nodes[j].GetComponent<Node>().ID == c[i]) //fill temp array with corresponding nodes
                             d[i] = nodes[j];
-                    }
+                    }                    
                 }
-                List<GameObject[]> temp = new List<GameObject[]>();
-                temp.Add(d);
-                dist = temp;               
+                temp.Add(d);                   
             }
-            foreach(GameObject[] c in dist)
+            dist = temp;
+            foreach (GameObject[] c in dist)
             {
                 Debug.Log("Node Cycle: ");
                 foreach(GameObject n in c)
