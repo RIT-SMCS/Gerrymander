@@ -8,6 +8,7 @@ TagManager:
   - Unit
   - Connector
   - Node
+  - District
   layers:
   - Default
   - TransparentFX
