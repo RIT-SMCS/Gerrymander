@@ -10,10 +10,11 @@ public enum Affiliation { Red = 0, Blue = 1, Green = 2, None = -1};
 public class GameManager : MonoBehaviour
 {
     public GameObject uiCanvas;
+    public GameObject districtPrefab; 
     GameObject[] nodes;
     List<Connector> connectors;
     List<Unit> units;
-    List<District> districts;
+    List<DistrictCollider2> districts;
     List<GameObject[]> dist; //THIS IS THE LIST OF CYCLES AS NODES. USE THIS TO MAKE DISTRICTS
     /// </summary>
     List<int[]> cycles;
@@ -40,7 +41,7 @@ public class GameManager : MonoBehaviour
         nodes = GameObject.FindGameObjectsWithTag("Node");
         connectors = new List<Connector>();
         units = new List<Unit>();
-        districts = new List<District>();
+        districts = new List<DistrictCollider2>();
         dist = new List<GameObject[]>();
         GameObject[] unitPrefabs = GameObject.FindGameObjectsWithTag("Unit");
         foreach (GameObject obj in unitPrefabs)
@@ -217,7 +218,7 @@ public class GameManager : MonoBehaviour
         //        //Debug.Log("Number of Districts: " + districts.Count);
         //    }
         //}
-        
+
         if (Input.GetKeyDown(KeyCode.C))
         {
             Debug.Log("Connectors: " + connectors.Count);
@@ -227,7 +228,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Nodes: " + nodes.Length);
             foreach (GameObject n in nodes)
             {
-               Debug.Log(n.GetComponent<Node>().ID);
+                Debug.Log(n.GetComponent<Node>().ID);
             }
         }
         //do not make connectors if there is no valid district made
@@ -236,7 +237,7 @@ public class GameManager : MonoBehaviour
         #region Setting Text
         int unitsInDistricts = 0;
         uiManager.SetText(uiManager.Pop, unitsInDistricts + "/" + units.Count + " in\nDistricts");
-        string winner = "blah" ;
+        string winner = "blah";
         Color winColor = Color.white;
         if (winningTeam == Affiliation.Blue)
         {
@@ -253,14 +254,14 @@ public class GameManager : MonoBehaviour
             winner = "Inds";
             winColor = Color.green;
         }
-        uiManager.SetText(uiManager.Goal, goalDistricts + " Districts\n" + winner + " Win" );
+        uiManager.SetText(uiManager.Goal, goalDistricts + " Districts\n" + winner + " Win");
         uiManager.SetColor(uiManager.Goal, winColor);
-        uiManager.SetText(uiManager.District, currentDistricts + "/" + goalDistricts + "\nDistricts");
+        uiManager.SetText(uiManager.District, districts.Count + "/" + goalDistricts + "\nDistricts");
 
         currentBlue = currentGreen = currentRed = 0;
-        foreach (District dist in districts)
+        foreach (DistrictCollider2 dist in districts)
         {
-            switch (dist.majority)
+            switch (dist.winner)
             {
                 case Affiliation.Red:
                     partyDistricts[0] += 1;
@@ -272,76 +273,75 @@ public class GameManager : MonoBehaviour
                     partyDistricts[2] += 1;
                     break;
             }
+            currentRed += dist.rgb[0];
+            currentGreen += dist.rgb[1];
+            currentBlue += dist.rgb[2];
+            //foreach (int v in dist.rgb)
+            //{
+            //    Unit voter = v.GetComponent<Unit>();
+            //    switch (voter.affiliation)
+            //    {
+            //        case Affiliation.Red:
+            //            currentRed += 1;
+            //            break;
+            //        case Affiliation.Blue:
+            //            currentBlue += 1;
+            //            break;
+            //        case Affiliation.Green:
+            //            currentGreen += 1;
+            //            break;
+            //    }
+            //}
+        }
 
-            foreach (Unit voter in dist.GetMembers())
-            {
-                switch (voter.affiliation)
-                {
-                    case Affiliation.Red:
-                        currentRed += 1;
-                        break;
-                    case Affiliation.Blue:
-                        currentBlue += 1;
-                        break;
-                    case Affiliation.Green:
-                        currentGreen += 1;
-                        break;
-                }
-            }
-        }
-        foreach (int party in partyDistricts)
+
+
+        GameObject panel;
+        uiManager.SetText(uiManager.GOP, currentRed + "/" + totalRed);
+        panel = uiManager.GOP.transform.parent.gameObject;
+        if (currentRed == totalRed)
         {
-            GameObject panel;
-            switch (party){
-                case (int)Affiliation.Red:
-                    uiManager.SetText(uiManager.GOP, currentRed + "/" + totalRed );
-                    panel = uiManager.GOP.transform.parent.gameObject;
-                    if (currentRed == totalRed)
-                    {
-                        panel.GetComponent<Image>().fillCenter = true;
-                    } else
-                    {
-                        panel.GetComponent<Image>().fillCenter = false;
-                    }
-                    break;
-                case (int)Affiliation.Blue:
-                    uiManager.SetText(uiManager.Dem, currentBlue + "/" + totalBlue);
-                    panel = uiManager.Dem.transform.parent.gameObject;
-                    if (currentRed == totalRed)
-                    {
-                        panel.GetComponent<Image>().fillCenter = true;
-                    }
-                    else
-                    {
-                        panel.GetComponent<Image>().fillCenter = false;
-                    }
-                    break;
-                case (int)Affiliation.Green:
-                    uiManager.SetText(uiManager.Ind, currentGreen + "/" + totalGreen);
-                    panel = uiManager.Ind.transform.parent.gameObject;
-                    if (currentRed == totalRed)
-                    {
-                        panel.GetComponent<Image>().fillCenter = true;
-                    }
-                    else
-                    {
-                        panel.GetComponent<Image>().fillCenter = false;
-                    }
-                    break;
-                default:
-                    break;
-            }
+            panel.GetComponent<Image>().fillCenter = true;
         }
+        else
+        {
+            panel.GetComponent<Image>().fillCenter = false;
+        }
+
+        uiManager.SetText(uiManager.Dem, currentBlue + "/" + totalBlue);
+        panel = uiManager.Dem.transform.parent.gameObject;
+        if (currentRed == totalRed)
+        {
+            panel.GetComponent<Image>().fillCenter = true;
+        }
+        else
+        {
+            panel.GetComponent<Image>().fillCenter = false;
+        }
+
+        uiManager.SetText(uiManager.Ind, currentGreen + "/" + totalGreen);
+        panel = uiManager.Ind.transform.parent.gameObject;
+        if (currentRed == totalRed)
+        {
+            panel.GetComponent<Image>().fillCenter = true;
+        }
+        else
+        {
+            panel.GetComponent<Image>().fillCenter = false;
+        }
+
+
+
         #endregion
         //check for win condition
 
         bool goalMet = currentDistricts == goalDistricts && partyDistricts[(int)winningTeam] == Mathf.RoundToInt((goalDistricts / 2.0f) + 1);
 
-        if(goalMet)
+        if (goalMet)
         {
             uiManager.ShowVictory();
         }
-	}
+    }
     /// <summary>
     /// http://stackoverflow.com/questions/526331/cycles-in-an-undirected-graph
     /// hard vs soft visit
@@ -415,6 +415,7 @@ public class GameManager : MonoBehaviour
     {
         if (connectors.Count > 2)
         {
+            districts.Clear();
             cycles = GetCycles();
             List<GameObject[]> temp = new List<GameObject[]>();
             foreach (int[] c in cycles)
@@ -442,6 +443,9 @@ public class GameManager : MonoBehaviour
                     str += "," + c[i].GetComponent<Node>().ID;
                 }
                 Debug.Log(str);
+                GameObject newDistrict = Instantiate(districtPrefab) as GameObject;
+                newDistrict.GetComponent<DistrictCollider2>().SetCollider(c);
+                districts.Add(newDistrict.GetComponent<DistrictCollider2>());
             }
         }
     }   
@@ -486,44 +490,7 @@ public class GameManager : MonoBehaviour
     //    }               
     //}
 
-    void checkForDistricts(Node n)
-    {
-        Debug.Log(n);
-        Queue<Node> active = new Queue<Node>();
-        Node first = n;
-        active.Enqueue(n);
-        List<Connector> loop = new List<Connector>();
-        while (active.Count != 0)
-        {
-            Node temp = active.Dequeue();
-            if (temp == first)
-            {
-                districts.Add(new District());
-            }
-            foreach (Connector c in temp.GetConnectors())
-            {
-                if (!c.isVisited)
-                {
-                    if (c.A != temp)
-                    {
-                        loop.Add(c);
-                        active.Enqueue(c.A);
-                        c.isVisited = true;
-                    }
-                    else
-                    {
-                        loop.Add(c);
-                        active.Enqueue(c.B);
-                        c.isVisited = true;
-                    }
-                }
-            }
-        }
-        foreach (Connector c in connectors)
-        {
-            c.isVisited = false;
-        }
-    }
+  
 
     Dictionary<Node, List<Node>> CreateAdjMap()
     {

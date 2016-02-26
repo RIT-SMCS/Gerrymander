@@ -92,9 +92,7 @@ public class DistrictCollider2 : MonoBehaviour {
 
 	public void AddUnit(int faction)
 	{
-		int num = rgb [faction];
-		num++; 
-		rgb [faction] = num; 
+        rgb[faction]++;
 		if (rgb [0] > rgb [1] && rgb [0] > rgb [2])
 			winner = Affiliation.Red;
 		else if (rgb [1] > rgb [0] && rgb [1] > rgb [2])
@@ -104,7 +102,7 @@ public class DistrictCollider2 : MonoBehaviour {
 		else
 			winner = Affiliation.None; 
 
-		Debug.Log (winner); 
+		//Debug.Log (winner); 
 	}
 	
 }
