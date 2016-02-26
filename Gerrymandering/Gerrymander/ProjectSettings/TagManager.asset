@@ -7,6 +7,7 @@ TagManager:
   - Sphere
   - Unit
   - Node
+  - District
   layers:
   - Default
   - TransparentFX

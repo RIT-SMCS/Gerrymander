@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic; 
 
 public class DistrictCollider : MonoBehaviour {
 
 	public PolygonCollider2D area; 
-	public GameObject[] points; 
+	public GameObject[] points;
 
+	public List<GameObject> units = new List<GameObject> (); 
+	public Affiliation winner; 
+	bool calcIt = false; 
 
 	// Use this for initialization
 	void Start () {
@@ -27,7 +31,7 @@ public class DistrictCollider : MonoBehaviour {
 	/// the result to SetCollider(Vector3[])
 	/// </summary>
 	/// <param name="points">Array of GameObjects.</param>
-	void SetCollider(GameObject[] points)
+	public void SetCollider(GameObject[] points)
 	{
 		Vector3[] vertices = new Vector3[points.Length]; 
 		for (int i = 0; i < points.Length; i++) 
@@ -41,15 +45,15 @@ public class DistrictCollider : MonoBehaviour {
 	/// Sets the collider2D according to an array of vector3s
 	/// </summary>
 	/// <param name="vertices">The vector3 vertex locations of the district shape</param>
-	void SetCollider(Vector3[] vertices)
+	public void SetCollider(Vector3[] vertices)
 	{
 		Vector2[] temp = new Vector2[vertices.Length];
 		Vector3 tempTemp; 
 		for (int i = 0; i < vertices.Length; i++) {
-			temp[i] = new Vector2(vertices[i].x, vertices[i].y); 
-			tempTemp = new Vector3(temp[i].x, temp[i].y, 0); 
+			temp[i] = new Vector2(vertices[i].x, vertices[i].z); 
+			tempTemp = new Vector3(temp[i].x, 0, temp[i].y); 
 			tempTemp = this.transform.InverseTransformPoint(tempTemp); 
-			temp[i] = new Vector2(tempTemp.x, tempTemp.y); 
+			temp[i] = new Vector2(tempTemp.x, tempTemp.z); 
 		}
 		area.points = temp; 
 	}
@@ -59,7 +63,7 @@ public class DistrictCollider : MonoBehaviour {
 		Debug.Log ("Detected 2D");
 		if (other.gameObject.CompareTag ("Unit")) 
 		{
-
+			units.Add(other.gameObject); 
 		}
 	}
 

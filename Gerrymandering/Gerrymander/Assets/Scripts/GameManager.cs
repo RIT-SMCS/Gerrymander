@@ -4,9 +4,11 @@ using UnityEngine;
 
 //awful coding practice.
 //change colors for color-blind people
-public enum Affiliation { Red = 0, Blue = 1, Green = 2, };
+public enum Affiliation { Red = 0, Blue = 1, Green = 2, None = 3,};
 public class GameManager : MonoBehaviour {
     public GameObject uiCanvas;
+	//This is for using Instantiate to create new districts
+	public GameObject districtPrefab; 
     GameObject[] nodes;
     List<Connector> connectors;
     List<Unit> units;
@@ -180,12 +182,21 @@ public class GameManager : MonoBehaviour {
                     Node[] nodeArray = path.ToArray();
                     //TODO SARAH: LINK WITH DISTRICT CODE
                     //nodeArray is an array of Nodes. 
+					//objectArray translates nodes into something the district can accept
+					GameObject[] objectArray = new GameObject[nodeArray.Length]; 
+					for(int i =0; i < nodeArray.Length; i++)
+					{
+						objectArray[i] = nodeArray[i].gameObject; 
+					}
+					GameObject newDistrict = Instantiate(districtPrefab) as GameObject; 
+					newDistrict.GetComponent<DistrictCollider2>().SetCollider(objectArray); 
+					//Debug.Log("District created"); 
                 }
                 else
                 {
                     //Debug.Log("no path found for node: " + n.name);f
                 }
-                break;
+               // break;
                 //Debug.Log("Number of Districts: " + districts.Count);
             }
         }
