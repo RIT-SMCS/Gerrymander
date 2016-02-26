@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 //awful coding practice.
 //change colors for color-blind people
-public enum Affiliation { Red = 0, Blue = 1, Green = 2, };
+public enum Affiliation { Red = 0, Blue = 1, Green = 2, None = -1};
 public class GameManager : MonoBehaviour
 {
     public GameObject uiCanvas;
@@ -37,24 +37,6 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        int[,] graph =
-            {
-                {1, 2}, {1, 3}, {1, 4}, {2, 3},
-                {3, 4}, {2, 6}, {4, 6}, {7, 8},
-                {8, 9}, {9, 7}
-            };
-        string str = "";
-        for (int i = 0; i < graph.GetLength(0); ++i)
-        {
-            for (int j = 0; j < graph.GetLength(1); ++j)
-            {
-                str += graph[i, j];
-            }
-            str += "\n";
-        }
-        Debug.Log(str);
-
-
         nodes = GameObject.FindGameObjectsWithTag("Node");
         connectors = new List<Connector>();
         units = new List<Unit>();
@@ -181,7 +163,7 @@ public class GameManager : MonoBehaviour
                 Destroy(tempConnector.gameObject);
                 tempConnector = null;
             }
-            checkCycles();
+            CheckCycles();
         }
         #endregion
         #region right click
@@ -193,7 +175,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Removing conenector");
                 connectors.Remove(ctr);
                 Destroy(ctr.gameObject);
-                checkCycles();
+                CheckCycles();
                 break;
             }
         }
@@ -429,7 +411,7 @@ public class GameManager : MonoBehaviour
         c.transform.localScale = new Vector3(0.2f, 0.2f, 0.95f * (initPoint - endPoint).magnitude - 1.0f);
     }
 
-    private void checkCycles()
+    private void CheckCycles()
     {
         if (connectors.Count > 2)
         {
@@ -437,12 +419,6 @@ public class GameManager : MonoBehaviour
             List<GameObject[]> temp = new List<GameObject[]>();
             foreach (int[] c in cycles)
             {
-                Debug.Log("Cycle: ");
-                foreach (int n in c)
-                {
-                    Debug.Log(n);
-                }
-                
                 //PAY NO ATTENTION TO THE TERRIBLE CODING
                 //THIS IS REALLY BAD AND WILL BE CHANGED LATER
                 GameObject[] d = new GameObject[c.Length]; //make temp array
@@ -459,11 +435,13 @@ public class GameManager : MonoBehaviour
             dist = temp;
             foreach (GameObject[] c in dist)
             {
-                Debug.Log("Node Cycle: ");
-                foreach(GameObject n in c)
+                //SARAH: MAKE DISTRICT HERE
+                string str = "" + c[0].GetComponent<Node>().ID;
+                for (int i = 1; i < c.Length; ++i)
                 {
-                    Debug.Log(n);
+                    str += "," + c[i].GetComponent<Node>().ID;
                 }
+                Debug.Log(str);
             }
         }
     }   
@@ -611,16 +589,6 @@ public class GameManager : MonoBehaviour
 
                 FindNewCycles(graph, cycles, new int[] { graph[i, j] });
             }
-        }
-        //list cycles
-        foreach (int[] c in cycles)
-        {
-            string str = "" + c[0];
-            for (int i = 0; i < c.Length; ++i)
-            {
-                str += "," + c[i];
-            }
-            Debug.Log(str);
         }
         return cycles;
     }

@@ -124,13 +124,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Detail
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
@@ -174,6 +167,13 @@ Material:
       data:
         first:
           name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Detail
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -975,13 +975,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Detail
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
@@ -1025,6 +1018,13 @@ Material:
       data:
         first:
           name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Detail
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -1270,13 +1270,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Detail
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
@@ -1320,6 +1313,13 @@ Material:
       data:
         first:
           name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Detail
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -1441,13 +1441,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Detail
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
@@ -1491,6 +1484,13 @@ Material:
       data:
         first:
           name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Detail
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -1612,13 +1612,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Detail
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
@@ -1662,6 +1655,13 @@ Material:
       data:
         first:
           name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Detail
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -1783,13 +1783,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Detail
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
@@ -1833,6 +1826,13 @@ Material:
       data:
         first:
           name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Detail
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -1954,13 +1954,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Detail
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
@@ -2004,6 +1997,13 @@ Material:
       data:
         first:
           name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Detail
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -2333,6 +2333,210 @@ Prefab:
       propertyPath: gmObj
       value: 
       objectReference: {fileID: 657610456}
+    - target: {fileID: 22461232, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22461232, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22461232, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22461232, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22461232, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22461232, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22434312, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22434312, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22434312, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22434312, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22434312, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22434312, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22433232, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22433232, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22433232, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22433232, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22433232, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22433232, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410936, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410936, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410936, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410936, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410936, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410936, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410106, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410106, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410106, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 56.4713287
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410106, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: -37.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410106, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410106, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22401274, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22401274, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22401274, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 131.471329
+      objectReference: {fileID: 0}
+    - target: {fileID: 22401274, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: -37.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 22401274, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 22401274, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22475110, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22475110, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22475110, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 206.471329
+      objectReference: {fileID: 0}
+    - target: {fileID: 22475110, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: -37.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 22475110, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 22475110, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 22489844, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22489844, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22489844, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 281.471313
+      objectReference: {fileID: 0}
+    - target: {fileID: 22489844, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: -37.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 22489844, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 22489844, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 11472206, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11472206, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11472206, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
   m_IsPrefabParent: 0
@@ -2467,13 +2671,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Detail
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
@@ -2517,6 +2714,13 @@ Material:
       data:
         first:
           name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Detail
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -2638,13 +2842,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Detail
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
@@ -2688,6 +2885,13 @@ Material:
       data:
         first:
           name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Detail
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -3371,13 +3575,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Detail
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
@@ -3421,6 +3618,13 @@ Material:
       data:
         first:
           name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Detail
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -3616,13 +3820,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Detail
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
@@ -3666,6 +3863,13 @@ Material:
       data:
         first:
           name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Detail
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -3999,13 +4203,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Detail
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
@@ -4049,6 +4246,13 @@ Material:
       data:
         first:
           name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Detail
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
