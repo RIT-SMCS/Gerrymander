@@ -259,7 +259,7 @@ public class GameManager : MonoBehaviour
         if (winningTeam == Affiliation.Blue)
         {
             winner = "Dems";
-            winColor = Color.blue;
+            winColor = Color.cyan;
         }
         else if (winningTeam == Affiliation.Red)
         {

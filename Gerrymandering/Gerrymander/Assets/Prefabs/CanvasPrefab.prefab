@@ -62,7 +62,7 @@ GameObject:
   - 222: {fileID: 22201264}
   - 114: {fileID: 11417158}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: GOPPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -96,7 +96,7 @@ GameObject:
   - 222: {fileID: 22268888}
   - 114: {fileID: 11480192}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: DemPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -237,7 +237,7 @@ GameObject:
   - 222: {fileID: 22274526}
   - 114: {fileID: 11425470}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: IndPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -794,7 +794,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: .235294104, g: .235294104, b: .235294104, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
