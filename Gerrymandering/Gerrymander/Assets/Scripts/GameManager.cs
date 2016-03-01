@@ -69,10 +69,7 @@ public class GameManager : MonoBehaviour
             uiManager = uiCanvas.GetComponent<UIManager>();
         }
 
-        for (int i = 0; i < 3; i++)
-        {
-            partyDistricts[i] = i;
-        }
+        
         //partyDistricts[(int)Affiliation.Red]++;
         //Create a background collider for raycast checks	
         GameObject backgroundPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
@@ -88,6 +85,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        for (int i = 0; i < partyDistricts.Length; i++)
+        {
+            partyDistricts[i] = 0;
+        }
         #region mouse raycast
         RaycastHit hit;
         Transform objectHit = null;
@@ -314,7 +315,7 @@ public class GameManager : MonoBehaviour
 
         uiManager.SetText(uiManager.Dem, currentBlue + "/" + totalBlue);
         panel = uiManager.Dem.transform.parent.gameObject;
-        if (currentRed == totalRed)
+        if (currentBlue == totalBlue)
         {
             panel.GetComponent<Image>().fillCenter = true;
             uiManager.SetColor(uiManager.Dem, Color.black);
@@ -327,7 +328,7 @@ public class GameManager : MonoBehaviour
 
         uiManager.SetText(uiManager.Ind, currentGreen + "/" + totalGreen);
         panel = uiManager.Ind.transform.parent.gameObject;
-        if (currentRed == totalRed)
+        if (currentGreen == totalGreen)
         {
             panel.GetComponent<Image>().fillCenter = true;
             uiManager.SetColor(uiManager.Ind, Color.black);
@@ -342,8 +343,16 @@ public class GameManager : MonoBehaviour
 
         #endregion
         //check for win condition
+        bool allDistricted = (currentBlue == totalBlue) && (currentRed == totalRed) && (currentGreen == totalGreen);
+        bool goalMet = (districts.Count == goalDistricts) && (partyDistricts[(int)winningTeam] >= Mathf.RoundToInt(((goalDistricts + 1) / 3) + 1)) && allDistricted;
 
-        bool goalMet = currentDistricts == goalDistricts && partyDistricts[(int)winningTeam] == Mathf.RoundToInt((goalDistricts / 2.0f) + 1);
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            Debug.Log("Goal Met: " +goalMet);
+            Debug.Log("Correct num districts: " +(districts.Count == goalDistricts));
+            Debug.Log("All units Districted: " + (allDistricted));
+            Debug.Log("winning team has enough: " + (partyDistricts[(int)winningTeam] >= Mathf.RoundToInt(((goalDistricts + 1) / 3) + 1)));
+        }
 
         if (goalMet)
         {
