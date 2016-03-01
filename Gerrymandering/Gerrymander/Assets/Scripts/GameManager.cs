@@ -471,11 +471,11 @@ public class GameManager : MonoBehaviour
     bool IsSubset(int[] a, int[] b)
     {
         int end = 0;
-        for(int i=0; i < a.Length; ++i)
+        for(int i=0; i < b.Length; ++i)
         {
-            for(int j = 0; j < b.Length; ++j)
+            for(int j = 0; j < a.Length; ++j)
             {
-                if (a[i] == b[j])
+                if (b[i] == a[j])
                     break;
                 end = j;
             }
