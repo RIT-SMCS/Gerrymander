@@ -13,13 +13,13 @@ public class Unit : MonoBehaviour {
         switch (affiliation)
         {
             case Affiliation.Red:
-                this.GetComponent<Renderer>().sharedMaterial.color = Color.red;
+                this.GetComponent<Renderer>().sharedMaterial.color = new Color(255.0f / 255.0f, 81.0f / 255.0f, 98.0f / 255.0f);
                 break;
             case Affiliation.Green:
-                this.GetComponent<Renderer>().sharedMaterial.color = Color.green;
+                this.GetComponent<Renderer>().sharedMaterial.color = new Color(94.0f / 255.0f, 255.0f / 255.0f, 134.0f / 255.0f);
                 break;
             case Affiliation.Blue:
-                this.GetComponent<Renderer>().sharedMaterial.color = Color.cyan;
+                this.GetComponent<Renderer>().sharedMaterial.color = new Color(74.0f / 255.0f, 94.0f / 255.0f, 232.0f / 255.0f);
                 break;
         }
             
