@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using System.Text.RegularExpressions;
 
 //awful coding practice.
 //change colors for color-blind people
@@ -34,6 +34,12 @@ public class GameManager : MonoBehaviour
 
     private Node startNode = null;
     private Connector tempConnector = null;
+
+    void OnLevelWasLoaded(int level)
+    {
+        Debug.Log("HIHIHIHIHI");
+        Start();
+    }
 
     // Use this for initialization
     void Start()
@@ -232,11 +238,17 @@ public class GameManager : MonoBehaviour
                 Debug.Log(n.GetComponent<Node>().ID);
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            NextLevel();
+        }
+
         //do not make connectors if there is no valid district made
 
         //update GUI
         #region Setting Text
-        
+
         string winner = "blah";
         Color winColor = Color.white;
         if (winningTeam == Affiliation.Blue)
@@ -359,6 +371,22 @@ public class GameManager : MonoBehaviour
             uiManager.ShowVictory();
         }
     }
+
+    public void NextLevel()
+    {
+        string name = Application.loadedLevelName;
+        string[] split = name.Split('_');
+        int num;
+        if( int.TryParse(split[split.Length - 1], out num))
+        {
+            num += 1;
+            string nextLevelString = "Lvl_" + num;
+            //Application.LoadLevel("Scenes/Levels/" + nextLevelString);
+            ClearConnections();
+            Application.LoadLevel(nextLevelString);
+        }
+    }
+
     /// <summary>
     /// http://stackoverflow.com/questions/526331/cycles-in-an-undirected-graph
     /// hard vs soft visit
@@ -415,6 +443,8 @@ public class GameManager : MonoBehaviour
         }
         return null; //found no path, return null
     }
+
+
     /// <summary>
     /// Updates the position and shape of a Connector to fit between the two given points
     /// </summary>
@@ -568,7 +598,7 @@ public class GameManager : MonoBehaviour
 
     List<int[]> GetCycles()
     {
-        int[,] adj = CreateAdjMatrix();
+        //int[,] adj = CreateAdjMatrix();
         int[,] graph = CreateAdjGraph();
         List<int[]> cycles = new List<int[]>();
 
