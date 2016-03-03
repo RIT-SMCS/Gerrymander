@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     private Node startNode = null;
     private Connector tempConnector = null;
 
+    bool split = false;
 
     // Use this for initialization
     void Start()
@@ -87,6 +88,15 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!split)
+        {
+            //bubble sort by length;
+            for (int i = 0; i < districts.Count; ++i)
+            {
+                districts[i].transform.position += new Vector3(0.0f, -1.0f*(i+2), 0.0f);
+            }
+            split = true;
+        }
         for (int i = 0; i < partyDistricts.Length; i++)
         {
             partyDistricts[i] = 0;
@@ -448,11 +458,16 @@ public class GameManager : MonoBehaviour
 
     private void CheckCycles()
     {
+        split = false;
         if (connectors.Count > 2)
         {
+            for (int i = 0; i < districts.Count; ++i)
+            {
+                Destroy(districts[i].gameObject);
+            }
             districts.Clear();
             cycles = GetCycles();
-            CheckSuper();
+            //CheckSuper();
             List<GameObject[]> temp = new List<GameObject[]>();
             foreach (int[] c in cycles)
             {
@@ -465,25 +480,53 @@ public class GameManager : MonoBehaviour
                     {
                         if (nodes[j].GetComponent<Node>().ID == c[i]) //fill temp array with corresponding nodes
                             d[i] = nodes[j];
-                    }                    
+                    }
                 }
-                temp.Add(d);                   
+                temp.Add(d);
             }
             dist = temp;
-            foreach (GameObject[] c in dist)
+            dist.Sort(delegate (GameObject[] a, GameObject[] b) { return a.Length.CompareTo(b.Length); } );
+            for (int k = 0; k < nodes.Length; ++k)
             {
-                //SARAH: MAKE DISTRICT HERE
-                string str = "" + c[0].GetComponent<Node>().ID;
-                for (int i = 1; i < c.Length; ++i)
+                if (k < dist.Count)
                 {
-                    str += "," + c[i].GetComponent<Node>().ID;
+                    GameObject[] c = dist[k];
+                    string str = "" + c[0].GetComponent<Node>().ID;
+                    for (int i = 1; i < c.Length; ++i)
+                    {
+                        str += "," + c[i].GetComponent<Node>().ID;
+                    }
+                    Debug.Log(str);
+                    GameObject newDistrict = Instantiate(districtPrefab) as GameObject;
+                    newDistrict.GetComponent<DistrictCollider2>().SetCollider(c);
+                    districts.Add(newDistrict.GetComponent<DistrictCollider2>());
+                    newDistrict.name = "disctrict_"+districts.Count;
                 }
-                Debug.Log(str);
-                GameObject newDistrict = Instantiate(districtPrefab) as GameObject;
-                newDistrict.GetComponent<DistrictCollider2>().SetCollider(c);
-                districts.Add(newDistrict.GetComponent<DistrictCollider2>());
             }
+            //foreach (GameObject[] c in dist)
+            //{
+            //    //SARAH: MAKE DISTRICT HERE
+            //    string str = "" + c[0].GetComponent<Node>().ID;
+            //    for (int i = 1; i < c.Length; ++i)
+            //    {
+            //        str += "," + c[i].GetComponent<Node>().ID;
+            //    }
+            //    Debug.Log(str);
+            //    GameObject newDistrict = Instantiate(districtPrefab) as GameObject;
+            //    newDistrict.GetComponent<DistrictCollider2>().SetCollider(c);
+            //    districts.Add(newDistrict.GetComponent<DistrictCollider2>());
+            //}
         }
+    }
+
+    string PrintArray(int[] arr)
+    {
+        string str = "" + arr[0];
+        for (int i = 1; i < arr.Length; ++i)
+        {
+            str += "," + arr[i];
+        }
+        return str;
     }
     void CheckSuper()
     {
@@ -497,19 +540,25 @@ public class GameManager : MonoBehaviour
                     if (c.Length < d.Length)
                     {
                         if (IsSubset(d, c))
-                            toRemove.Add(d);                        
+                        {
+                            toRemove.Add(d);
+                            Debug.Log(PrintArray(c) + " is subset of " + PrintArray(d));
+                        }                      
                     }
                     if (d.Length < c.Length)
                     {
                         if (IsSubset(c, d))
+                        {
                             toRemove.Add(c);
+                            Debug.Log(PrintArray(d) + " is subset of " + PrintArray(c));
+                        }
                     }
                 }
             }
         }
         foreach (int[] c in toRemove)
         {
-            cycles.Remove(c);
+            //cycles.Remove(c);
         }
     }
 
@@ -524,7 +573,7 @@ public class GameManager : MonoBehaviour
                 if (b[i] == a[j])
                     break;                
             }
-            if (j == b.Length)
+            if (j == a.Length)
                 return false;
         }
         return true;
@@ -541,11 +590,11 @@ public class GameManager : MonoBehaviour
             connectors.RemoveAt(connectors.Count - 1);
         }
 
-        while (districts.Count > 0)
+        for (int i = 0; i < districts.Count; ++i)
         {
-            Destroy(districts[districts.Count - 1].gameObject);
-            districts.RemoveAt(districts.Count - 1);
+            Destroy(districts[i].gameObject);
         }
+        districts.Clear();
     }
 
     //void checkForDistricts(Node first, Node curr)

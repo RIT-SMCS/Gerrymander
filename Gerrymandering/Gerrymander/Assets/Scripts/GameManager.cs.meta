@@ -1,10 +1,14 @@
 fileFormatVersion: 2
 guid: 317ae26dc3ec0bf4db0dd6ae6f6a0a38
-timeCreated: 1454436278
+timeCreated: 1457031470
 licenseType: Pro
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - uiCanvas: {instanceID: 0}
+  - districtPrefab: {instanceID: 0}
+  - nodePrefab: {fileID: 131810, guid: 0e0623a5b00ef574da0caf219c4c3cde, type: 2}
+  - connectorPrefab: {fileID: 11494194, guid: b3936291835e4b445978cb143b89cd8b, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
