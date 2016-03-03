@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Node.GLOBAL_ID = 0;
         nodes = GameObject.FindGameObjectsWithTag("Node");
         connectors = new List<Connector>();
         units = new List<Unit>();
@@ -90,12 +91,55 @@ public class GameManager : MonoBehaviour
     {
         if (!split)
         {
-            //bubble sort by length;
+            districts.Sort(delegate (DistrictCollider2 a, DistrictCollider2 b) {
+                return a.NumUnits.CompareTo(b.NumUnits);
+            });
+
             for (int i = 0; i < districts.Count; ++i)
             {
-                districts[i].transform.position += new Vector3(0.0f, -1.0f*(i+2), 0.0f);
+                districts[i].transform.position += Vector3.down * (5.0f + 1.5f * i);
             }
             split = true;
+            //check for districts underneath units
+            List<string> saveDistricts = new List<string>();
+            foreach (Unit u in units)
+            {
+                RaycastHit unitHit;
+                Transform unitObjectHit = null;
+                Ray unitRay = new Ray(u.transform.position + 2.0f*Vector3.down, Vector3.down);//Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(unitRay, out unitHit) && unitHit.transform.gameObject.GetComponent<DistrictCollider2>() != null)
+                {
+                    unitObjectHit = unitHit.transform;
+                    Debug.Log("hit " + unitObjectHit.name);
+                    //unitHit.transform.position = new Vector3(unitHit.transform.position.x, 0.0f, unitHit.transform.position.z);
+                }
+                else {
+                    unitObjectHit = u.transform;
+                }
+                if (unitObjectHit != u.transform)
+                {
+                    if (!saveDistricts.Contains(unitObjectHit.name))
+                    {
+                        saveDistricts.Add(unitObjectHit.name);
+                    }
+                }
+            }
+            //clear districts not to save
+            for (int i = 0; i < districts.Count; ++i)
+            {
+                if (!saveDistricts.Contains(districts[i].name))
+                //if (districts[i].transform.position.y < -1.0f)
+                {
+                    Debug.Log("removed " + districts[i].name);
+                    Destroy(districts[i].gameObject);
+                    districts.RemoveAt(i--);
+                }
+            }
+            for (int i = 0; i < districts.Count; ++i)
+            {
+                //districts[i].transform.position -= Vector3.down * (5.0f + 1.5f * i);
+            }
+            Debug.Log("districts to save: " + saveDistricts.Count + "\tDistricts remaining: "+districts.Count);
         }
         for (int i = 0; i < partyDistricts.Length; i++)
         {
@@ -163,6 +207,7 @@ public class GameManager : MonoBehaviour
                     UpdateConnector(c, startNode.transform.position, endNode.transform.position);
                     c.GetComponent<Renderer>().material.color = Color.black;
                     c.transform.SetParent(this.transform);
+                    c.name = "Connector_" + c.A.ID + "_" + c.B.ID;
                     connectors.Add(c);
                     startNode = endNode;
                 }
@@ -485,8 +530,9 @@ public class GameManager : MonoBehaviour
                 temp.Add(d);
             }
             dist = temp;
-            dist.Sort(delegate (GameObject[] a, GameObject[] b) { return a.Length.CompareTo(b.Length); } );
-            for (int k = 0; k < nodes.Length; ++k)
+            //dist.Sort(delegate (GameObject[] a, GameObject[] b) { return a.Length.CompareTo(b.Length); } );
+            
+            for (int k = 0; k < dist.Count; ++k)
             {
                 if (k < dist.Count)
                 {
@@ -503,6 +549,9 @@ public class GameManager : MonoBehaviour
                     newDistrict.name = "disctrict_"+districts.Count;
                 }
             }
+
+            
+
             //foreach (GameObject[] c in dist)
             //{
             //    //SARAH: MAKE DISTRICT HERE
@@ -684,14 +733,19 @@ public class GameManager : MonoBehaviour
         int[,] graph = CreateAdjGraph();
         List<int[]> cycles = new List<int[]>();
 
-        for (int i = 0; i < graph.GetLength(0); ++i)
+        for (int i = 0; i < nodes.Length; ++i)
         {
-            for (int j = 0; j < graph.GetLength(1); ++j)
-            {
-
-                FindNewCycles(graph, cycles, new int[] { graph[i, j] });
-            }
+            FindNewCycles(graph, cycles, new int[] { i+1 });
         }
+
+        //for (int i = 0; i < graph.GetLength(0); ++i)
+        //{
+        //    for (int j = 0; j < graph.GetLength(1); ++j)
+        //    {
+        //
+        //        FindNewCycles(graph, cycles, new int[] { graph[i, j] });
+        //    }
+        //}
         return cycles;
     }
 
@@ -701,16 +755,16 @@ public class GameManager : MonoBehaviour
         int x;
         int[] subPath = new int[path.Length + 1];
 
-        for (int i = 0; i < graph.GetLength(0); ++i)
+        for (int i = 0; i < graph.GetLength(0); ++i) //i is the Row in our connection matrix
         {
-            for (int y = 0; y <= 1; ++y)
+            for (int y = 0; y <= 1; ++y) ///y is the col
             {
                 if (graph[i, y] == n) //current node
                 {
-                    x = graph[i, (y + 1) % 2];//???
+                    x = graph[i, (y + 1) % 2];//the pair of i,y
                     if (!IsVisited(x, path)) //havent seen node yet
                     {
-                        subPath[0] = x;
+                        subPath[0] = x; //new path starts with pair
                         System.Array.Copy(path, 0, subPath, 1, path.Length);
                         FindNewCycles(graph, cycles, subPath);
                     } else if (path.Length > 2 && x == path[path.Length-1]){ //found cycle
@@ -720,7 +774,6 @@ public class GameManager : MonoBehaviour
                         {
                             cycles.Add(normalized);
                         }
-
                     }
                 }
             }

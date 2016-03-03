@@ -4,7 +4,7 @@ using System.Collections;
 
 public class Node : MonoBehaviour {
     private List<Connector> connectors;
-    private static int GLOBAL_ID = 0;
+    public static int GLOBAL_ID = 0;
     private int id = -1;
 
     public int ID

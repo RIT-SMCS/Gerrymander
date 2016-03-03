@@ -11,7 +11,8 @@ public class DistrictCollider2 : MonoBehaviour {
 	public List<GameObject> units = new List<GameObject> (); 
 	public int[] rgb;
 	public Affiliation winner; 
-	bool calcIt = false; 
+	bool calcIt = false;
+    public int NumUnits = 0;
 
 	public DistrictCollider2(GameObject[] points)
 	{
@@ -88,6 +89,7 @@ public class DistrictCollider2 : MonoBehaviour {
 	/// <param name="faction">Faction.</param>
 	public void AddUnit(int faction)
 	{
+        ++NumUnits;
         rgb[faction]++;
 		if (rgb [0] > rgb [1] && rgb [0] > rgb [2]) {
 			winner = Affiliation.Red;
