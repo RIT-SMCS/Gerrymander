@@ -35,11 +35,6 @@ public class GameManager : MonoBehaviour
     private Node startNode = null;
     private Connector tempConnector = null;
 
-    void OnLevelWasLoaded(int level)
-    {
-        Debug.Log("HIHIHIHIHI");
-        Start();
-    }
 
     // Use this for initialization
     void Start()
