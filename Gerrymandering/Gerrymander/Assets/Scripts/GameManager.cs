@@ -191,36 +191,7 @@ public class GameManager : MonoBehaviour
         #endregion
         //end raycast
 
-        //mouse / touch input (raycasts)
-        //after input calculate districts 
-        //if (connectors.Count > 2 && districts.Count < 10)
-        //{
-        //    Dictionary<Node, List<Node>> map = CreateAdjMap();
-        //    foreach (GameObject n in nodes)
-        //    {
-        //        List<Node> path = GetPath(map, n.GetComponent<Node>());
-        //        if (path != null)
-        //        {
-        //            //Debug.Log(n.name + ": path found - length: " + path.Count);
-        //            string str = "";
-        //            foreach (Node m in path)
-        //            {
-        //                str += "\t->" + m.name;
-        //            }
-        //            //Debug.Log(str);
-        //            Node[] nodeArray = path.ToArray();
-        //            //TODO SARAH: LINK WITH DISTRICT CODE
-        //            //nodeArray is an array of Nodes. 
-        //        }
-        //        else
-        //        {
-        //            //Debug.Log("no path found for node: " + n.name);f
-        //        }
-        //        break;
-        //        //Debug.Log("Number of Districts: " + districts.Count);
-        //    }
-        //}
-
+        #region debugs
         if (Input.GetKeyDown(KeyCode.C))
         {
             Debug.Log("Connectors: " + connectors.Count);
@@ -239,7 +210,27 @@ public class GameManager : MonoBehaviour
             NextLevel();
         }
 
+
+        if(Input.GetKeyDown(KeyCode.Y))
+        {
+            Debug.Log(cycles.Count + " cycles");
+            if (cycles.Count > 0)
+            {
+                Debug.Log("Cycles: ");
+                string str;
+                foreach (int[] c in cycles)
+                {
+                    str = "";
+                    foreach (int n in c)
+                    {
+                        str += n + ",";
+                    }
+                    Debug.Log(str);
+                }
+            }
+        }
         //do not make connectors if there is no valid district made
+        #endregion
 
         //update GUI
         #region Setting Text
@@ -459,6 +450,7 @@ public class GameManager : MonoBehaviour
         {
             districts.Clear();
             cycles = GetCycles();
+            CheckSuper();
             List<GameObject[]> temp = new List<GameObject[]>();
             foreach (int[] c in cycles)
             {
@@ -490,7 +482,50 @@ public class GameManager : MonoBehaviour
                 districts.Add(newDistrict.GetComponent<DistrictCollider2>());
             }
         }
-    }   
+    }
+    void CheckSuper()
+    {
+        List<int[]> toRemove = new List<int[]>();
+        foreach (int[] c in cycles)
+        {
+            foreach (int[] d in cycles)
+            {
+                if (c != d)
+                {
+                    if (c.Length < d.Length)
+                    {
+                        if (IsSubset(d, c))
+                            toRemove.Add(d);                        
+                    }
+                    if (d.Length < c.Length)
+                    {
+                        if (IsSubset(c, d))
+                            toRemove.Add(c);
+                    }
+                }
+            }
+        }
+        foreach (int[] c in toRemove)
+        {
+            cycles.Remove(c);
+        }
+    }
+
+    bool IsSubset(int[] a, int[] b)
+    {
+        int j = 0;
+        for (int i=0; i < b.Length; ++i)
+        {           
+            for(; j < a.Length; ++j)
+            {
+                if (b[i] == a[j])
+                    break;                
+            }
+            if (j == a.Length)
+                return false;
+        }
+        return true;
+    }
 
     #region Find Cycles take 1
 
