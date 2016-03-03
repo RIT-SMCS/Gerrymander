@@ -5,17 +5,17 @@ public class Unit : MonoBehaviour {
     public Affiliation affiliation;
     private Affiliation oldAffiliation;
 
-    Material[] unitMaterials = new Material[3];
-    new Renderer renderer;
-    Material currentMaterial = null;
+    Color[] unitMaterials = new Color[3];
+    new SpriteRenderer renderer;
+    Color currentMaterial = Color.white;
     // Use this for initialization
     void Awake()
     {
-        unitMaterials[(int)Affiliation.Red] = MaterialSetup(new Color(255.0f / 255.0f, 81.0f / 255.0f, 98.0f / 255.0f), "red");
-        unitMaterials[(int)Affiliation.Green] = MaterialSetup(new Color(94.0f / 255.0f, 255.0f / 255.0f, 134.0f / 255.0f), "green");
-        unitMaterials[(int)Affiliation.Blue] = MaterialSetup(new Color(74.0f / 255.0f, 94.0f / 255.0f, 232.0f / 255.0f), "blue");
+        unitMaterials[(int)Affiliation.Red] = new Color(255.0f / 255.0f, 81.0f / 255.0f, 98.0f / 255.0f);
+        unitMaterials[(int)Affiliation.Green] =new Color(94.0f / 255.0f, 255.0f / 255.0f, 134.0f / 255.0f);
+        unitMaterials[(int)Affiliation.Blue] = new Color(74.0f / 255.0f, 94.0f / 255.0f, 232.0f / 255.0f);
         //unitMaterials[(int)Affiliation.None] = MaterialSetup(new Color(255.0f / 255.0f, 81.0f / 255.0f, 98.0f / 255.0f));
-        renderer = this.GetComponent<Renderer>(); 
+        renderer = this.GetComponent<SpriteRenderer>(); 
         //renderer.sharedMaterials = unitMaterials;
     }
 	
@@ -23,10 +23,6 @@ public class Unit : MonoBehaviour {
 	void Update () {
         if (affiliation != oldAffiliation)
         {
-            if (currentMaterial != null)
-            {
-                UnityEditor.AssetDatabase.DeleteAsset(UnityEditor.AssetDatabase.GetAssetPath(currentMaterial));
-            }
             switch (affiliation)
             {
                 case Affiliation.Red:
@@ -39,7 +35,7 @@ public class Unit : MonoBehaviour {
                     currentMaterial = unitMaterials[(int)Affiliation.Blue];
                     break;
             }
-            renderer.material = currentMaterial;
+            renderer.color = currentMaterial;
         }
         oldAffiliation = affiliation;
 	}
