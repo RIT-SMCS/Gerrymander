@@ -360,7 +360,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: .31764707, b: .384313732, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -419,7 +419,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 1, b: 0, a: 1}
+  m_Color: {r: .368627459, g: 1, b: .525490224, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -794,7 +794,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: .235294104, g: .235294104, b: .235294104, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -821,7 +821,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 1, a: 1}
+  m_Color: {r: .290196091, g: .368627459, b: .909803927, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -879,7 +879,7 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 65, y: 30}
-  m_Spacing: {x: 10, y: 20}
+  m_Spacing: {x: 5, y: 20}
   m_Constraint: 2
   m_ConstraintCount: 1
 --- !u!114 &11499460
@@ -1218,7 +1218,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -37.5}
-  m_SizeDelta: {x: 0, y: 75}
+  m_SizeDelta: {x: -20, y: 75}
   m_Pivot: {x: .5, y: .5}
 --- !u!224 &22461232
 RectTransform:
@@ -1274,7 +1274,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 37.5}
-  m_SizeDelta: {x: -50, y: 75}
+  m_SizeDelta: {x: -20, y: 75}
   m_Pivot: {x: .5, y: .5}
 --- !u!224 &22475110
 RectTransform:

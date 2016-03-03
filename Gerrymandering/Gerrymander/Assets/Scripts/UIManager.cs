@@ -46,7 +46,7 @@ public class UIManager : MonoBehaviour {
 
     public void ShowVictory()
     {
-        if (solved)
+        if (!solved)
         {
             GameObject victory = GameObject.Instantiate(winPrefab);
             victory.transform.SetParent(transform);
