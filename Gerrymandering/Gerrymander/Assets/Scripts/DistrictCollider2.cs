@@ -80,27 +80,28 @@ public class DistrictCollider2 : MonoBehaviour {
 		mCol.sharedMesh = mesh; 
 		//mCol.isTrigger = true; 
 	}
-	
-	/*void OnTriggerEnter2D(Collider2D other)
-	{
-		Debug.Log ("Detected 2D");
-		if (other.gameObject.CompareTag ("Unit")) 
-		{
-			units.Add(other.gameObject); 
-		}
-	}*/
 
+	/// <summary>
+	/// This method for calculating the winner of a district. 
+	/// Runs once for each member in a district.
+	/// </summary>
+	/// <param name="faction">Faction.</param>
 	public void AddUnit(int faction)
 	{
         rgb[faction]++;
-		if (rgb [0] > rgb [1] && rgb [0] > rgb [2])
+		if (rgb [0] > rgb [1] && rgb [0] > rgb [2]) {
 			winner = Affiliation.Red;
-		else if (rgb [1] > rgb [0] && rgb [1] > rgb [2])
+			this.gameObject.GetComponent<Renderer> ().material.color = Color.red; 
+		} else if (rgb [1] > rgb [0] && rgb [1] > rgb [2]) {
 			winner = Affiliation.Green;
-		else if (rgb [2] > rgb [0] && rgb [2] > rgb [1])
+			this.gameObject.GetComponent<Renderer> ().material.color = Color.green; 
+		} else if (rgb [2] > rgb [0] && rgb [2] > rgb [1]) {
 			winner = Affiliation.Blue;
-		else
+			this.gameObject.GetComponent<Renderer> ().material.color = Color.blue; 
+		} else {
 			winner = Affiliation.None; 
+			this.gameObject.GetComponent<Renderer> ().material.color = Color.grey; 
+		}
 
 		//Debug.Log (winner); 
 	}
