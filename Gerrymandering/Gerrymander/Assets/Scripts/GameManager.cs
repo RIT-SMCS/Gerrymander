@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
 {
     public GameObject uiCanvas;
     public GameObject districtPrefab; 
+	public GameObject nodePrefab;
     GameObject[] nodes;
     List<Connector> connectors;
     List<Unit> units;
@@ -148,7 +149,7 @@ public class GameManager : MonoBehaviour
                 }
                 else {
                     UpdateConnector(c, startNode.transform.position, endNode.transform.position);
-                    c.GetComponent<Renderer>().material.color = Color.blue;
+                    c.GetComponent<Renderer>().material.color = Color.black;
                     c.transform.SetParent(this.transform);
                     connectors.Add(c);
                     startNode = endNode;
@@ -406,9 +407,10 @@ public class GameManager : MonoBehaviour
     /// <param name="endPoint"></param>
     private void UpdateConnector(Connector c, Vector3 initPoint, Vector3 endPoint)
     {
-        c.transform.position = 0.5f * (initPoint + endPoint);
+        c.transform.position = .5f * (initPoint + endPoint) + new Vector3(0.0f, 0.0f, 0.0f);
         c.transform.forward = initPoint - endPoint;
-        c.transform.localScale = new Vector3(0.2f, 0.2f, 0.95f * (initPoint - endPoint).magnitude - 1.0f);
+		float displacement = nodePrefab.GetComponent<CapsuleCollider> ().radius * 2;
+        c.transform.localScale = new Vector3(0.2f, 0.2f, 0.95f * (initPoint - endPoint).magnitude - displacement);
     }
 
     private void CheckCycles()
