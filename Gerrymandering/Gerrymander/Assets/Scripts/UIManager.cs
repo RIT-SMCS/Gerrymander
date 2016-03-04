@@ -48,9 +48,10 @@ public class UIManager : MonoBehaviour {
     {
         if (!solved)
         {
-            GameObject victory = GameObject.Instantiate(winPrefab);
+            /*GameObject victory = GameObject.Instantiate(winPrefab);
             victory.transform.SetParent(transform);
-            victory.transform.localPosition = new Vector3(0, 0, 0);
+            victory.transform.localPosition = new Vector3(0, 0, 0);*/
+			gameManager.transitionPrefab.GetComponent<Transition>().FadeIn(); 
         }
         solved = true;
     }

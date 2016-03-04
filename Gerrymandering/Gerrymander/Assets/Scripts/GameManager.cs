@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public GameObject uiCanvas;
     public GameObject districtPrefab; 
 	public GameObject nodePrefab;
+	public GameObject transitionPrefab; 
     GameObject[] nodes;
     List<Connector> connectors;
     List<Unit> units;

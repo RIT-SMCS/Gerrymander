@@ -9,22 +9,21 @@ public class DistrictCollider : MonoBehaviour {
 
 	public List<GameObject> units = new List<GameObject> (); 
 	public Affiliation winner; 
-	bool calcIt = false; 
 
 	// Use this for initialization
 	void Start () {
 		area = this.gameObject.GetComponent<PolygonCollider2D> (); 
-		Vector3[] passIn = new Vector3[points.Length]; 
+		/*Vector3[] passIn = new Vector3[points.Length]; 
 		for (int i = 0; i < points.Length; i++)
 			passIn [i] = points [i].transform.position; 
-		SetCollider (passIn); 
+		SetCollider (passIn); */
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
-
+	/*
 	/// <summary>
 	/// Takes in an array of gameobjects, 
 	/// strips out the vector3s, and passes
@@ -63,8 +62,11 @@ public class DistrictCollider : MonoBehaviour {
 		Debug.Log ("Detected 2D");
 		if (other.gameObject.CompareTag ("Unit")) 
 		{
-			units.Add(other.gameObject); 
+			if(other.gameObject.GetComponent<DistrictCollider>().points.Length < points.Length)
+				Destroy(this.gameObject); 
+			else if(other.gameObject.GetComponent<DistrictCollider>().points.Length > points.Length)
+				Destroy(other.GameObject); 
 		}
 	}
-
+*/
 }
