@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour {
     Dictionary<GameObject, Text> textDict;
     public GameObject winPrefab, pausePrefab;
     bool solved = false;
+    bool paused = false;
 	// Use this for initialization
 	void Start () {
 	    if(gmObj != null)
@@ -63,7 +64,7 @@ public class UIManager : MonoBehaviour {
 
     public void ShowPauseMenu()
     {
-        if(pausePrefab != null)
+        if(pausePrefab != null && !paused)
         {
             GameObject pauseMenu = Instantiate(pausePrefab) as GameObject;
             pauseMenu.transform.SetParent(transform);
@@ -72,6 +73,7 @@ public class UIManager : MonoBehaviour {
             pauseMenu.name = "PauseMenu";
             Button closeBtn = pauseMenu.transform.FindChild("Button").GetComponent<Button>() as Button;
             closeBtn.onClick.AddListener(delegate () { HidePauseMenu(); });
+            paused = true;
         }
     }
 
@@ -82,6 +84,7 @@ public class UIManager : MonoBehaviour {
         if (pausePrefab != null)
         {
             Destroy(transform.FindChild("PauseMenu").gameObject);
+            paused = false;
         }
     }
 

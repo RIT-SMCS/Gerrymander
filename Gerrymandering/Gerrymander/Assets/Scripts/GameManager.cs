@@ -27,8 +27,7 @@ public class GameManager : MonoBehaviour
     public int goalDistricts = 3;
     int currentDistricts = 0;
     int totalRed, totalBlue, totalGreen = 0;
-    int currentRed, currentBlue, currentGreen = 0;    
-
+    int currentRed, currentBlue, currentGreen = 0;
     //Dictionary<Affiliation, int> partyDistricts;
     public Connector connectorPrefab;
     public float maxConnectorLength = 5.0f;
@@ -37,7 +36,8 @@ public class GameManager : MonoBehaviour
     private Node startNode = null;
     private Connector tempConnector = null;
 
-    bool split = false;
+    //bool split = false;
+    int split = -1;
 
     // Use this for initialization
     void Start()
@@ -90,7 +90,9 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!split)
+        #region find real districts
+        //if (!split)
+        if (split > 0) { --split; } else if (split == 0)
         {
             districts.Sort(delegate (DistrictCollider2 a, DistrictCollider2 b) {
                 return a.NumUnits.CompareTo(b.NumUnits);
@@ -100,7 +102,7 @@ public class GameManager : MonoBehaviour
             {
                 districts[i].transform.position += Vector3.down * (5.0f + 1.5f * i);
             }
-            split = true;
+            split = -1;
             //check for districts underneath units
             List<string> saveDistricts = new List<string>();
             foreach (Unit u in units)
@@ -111,7 +113,7 @@ public class GameManager : MonoBehaviour
                 if (Physics.Raycast(unitRay, out unitHit) && unitHit.transform.gameObject.GetComponent<DistrictCollider2>() != null)
                 {
                     unitObjectHit = unitHit.transform;
-                    Debug.Log("hit " + unitObjectHit.name);
+                    //Debug.Log("hit " + unitObjectHit.name);
                     //unitHit.transform.position = new Vector3(unitHit.transform.position.x, 0.0f, unitHit.transform.position.z);
                 }
                 else {
@@ -131,17 +133,25 @@ public class GameManager : MonoBehaviour
                 if (!saveDistricts.Contains(districts[i].name))
                 //if (districts[i].transform.position.y < -1.0f)
                 {
-                    Debug.Log("removed " + districts[i].name);
+                    //Debug.Log("removed " + districts[i].name);
                     Destroy(districts[i].gameObject);
                     districts.RemoveAt(i--);
                 }
             }
+            //move meshes back into xz plane
             for (int i = 0; i < districts.Count; ++i)
             {
-                //districts[i].transform.position -= Vector3.down * (5.0f + 1.5f * i);
+                districts[i].transform.position = new Vector3(districts[i].transform.position.x, 0.0f, districts[i].transform.position.z);
+                districts[i].GetComponent<Renderer>().enabled = true;
+                if (districts[i].NumUnits != units.Count / goalDistricts)
+                {
+                    districts[i].GetComponent<Renderer>().material.color *= 0.25f;
+                }
             }
-            Debug.Log("districts to save: " + saveDistricts.Count + "\tDistricts remaining: "+districts.Count);
+            //Debug.Log("districts to save: " + saveDistricts.Count + "\tDistricts remaining: "+districts.Count);
         }
+        #endregion
+
         for (int i = 0; i < partyDistricts.Length; i++)
         {
             partyDistricts[i] = 0;
@@ -162,7 +172,7 @@ public class GameManager : MonoBehaviour
         #region left click
         if (Input.GetMouseButtonDown(0))
         { //left click down
-            Debug.Log("click");
+            //Debug.Log("click");
             if ((startNode = objectHit.GetComponent<Node>()) != null)
             {
                 tempConnector = (Connector)Instantiate(connectorPrefab);
@@ -217,7 +227,7 @@ public class GameManager : MonoBehaviour
         }
         else if (Input.GetMouseButtonUp(0))
         {//left click up
-            Debug.Log("Release");
+            //Debug.Log("Release");
             if (tempConnector != null)
             {
                 Destroy(tempConnector.gameObject);
@@ -229,10 +239,10 @@ public class GameManager : MonoBehaviour
         #region right click
         if (Input.GetMouseButtonDown(1))
         { //right click down
-            Debug.Log("click");
+            //Debug.Log("click");
             for (Connector ctr = objectHit.GetComponent<Connector>(); ctr != null;)
             {
-                Debug.Log("Removing conenector");
+                //Debug.Log("Removing conenector");
                 connectors.Remove(ctr);
                 Destroy(ctr.gameObject);
                 CheckCycles();
@@ -399,7 +409,17 @@ public class GameManager : MonoBehaviour
         #endregion
         //check for win condition
         bool allDistricted = (currentBlue == totalBlue) && (currentRed == totalRed) && (currentGreen == totalGreen);
-        bool goalMet = (districts.Count == goalDistricts) && (partyDistricts[(int)winningTeam] >= Mathf.RoundToInt(((goalDistricts + 1) / 3) + 1)) && allDistricted;
+        bool rightDistrictPop = true;
+        
+        foreach (DistrictCollider2 district in districts)
+        {
+            if (district.NumUnits != units.Count / goalDistricts)
+            {
+                rightDistrictPop = false;
+                break;
+            }
+        }
+        bool goalMet = rightDistrictPop && (districts.Count == goalDistricts) && (partyDistricts[(int)winningTeam] >= Mathf.RoundToInt(((goalDistricts + 1) / 3) + 1)) && allDistricted;
 
         if (Input.GetKeyUp(KeyCode.Space))
         {
@@ -499,12 +519,12 @@ public class GameManager : MonoBehaviour
         c.transform.position = .5f * (initPoint + endPoint) + new Vector3(0.0f, 0.0f, 0.0f);
         c.transform.forward = initPoint - endPoint;
 		float displacement = nodePrefab.GetComponent<CapsuleCollider> ().radius * 2;
-        c.transform.localScale = new Vector3(0.2f, 0.2f, 0.95f * (initPoint - endPoint).magnitude - displacement);
+        c.transform.localScale = new Vector3(0.5f, 0.5f, 0.95f * (initPoint - endPoint).magnitude - displacement);
     }
 
     private void CheckCycles()
     {
-        split = false;
+        split = 1;
         if (connectors.Count > 2)
         {
             for (int i = 0; i < districts.Count; ++i)
@@ -543,11 +563,12 @@ public class GameManager : MonoBehaviour
                     {
                         str += "," + c[i].GetComponent<Node>().ID;
                     }
-                    Debug.Log(str);
+                    //Debug.Log(str);
                     GameObject newDistrict = Instantiate(districtPrefab) as GameObject;
                     newDistrict.GetComponent<DistrictCollider2>().SetCollider(c);
                     districts.Add(newDistrict.GetComponent<DistrictCollider2>());
                     newDistrict.name = "disctrict_"+districts.Count;
+                    newDistrict.GetComponent<Renderer>().enabled = false;
                 }
             }
 
@@ -592,7 +613,7 @@ public class GameManager : MonoBehaviour
                         if (IsSubset(d, c))
                         {
                             toRemove.Add(d);
-                            Debug.Log(PrintArray(c) + " is subset of " + PrintArray(d));
+                           //Debug.Log(PrintArray(c) + " is subset of " + PrintArray(d));
                         }                      
                     }
                     if (d.Length < c.Length)
@@ -600,7 +621,7 @@ public class GameManager : MonoBehaviour
                         if (IsSubset(c, d))
                         {
                             toRemove.Add(c);
-                            Debug.Log(PrintArray(d) + " is subset of " + PrintArray(c));
+                            //Debug.Log(PrintArray(d) + " is subset of " + PrintArray(c));
                         }
                     }
                 }
