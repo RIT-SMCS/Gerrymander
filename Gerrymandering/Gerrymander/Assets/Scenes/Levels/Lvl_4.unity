@@ -2218,11 +2218,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-<<<<<<< HEAD
   m_RootOrder: 29
-=======
-  m_RootOrder: 30
->>>>>>> 851405c3fab725ab83d41e7f8cbe09b34b608d0a
 --- !u!1001 &1152841005
 Prefab:
   m_ObjectHideFlags: 0
