@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
+using System.Linq;
+using System;
+
 
 //awful coding practice.
 //change colors for color-blind people
@@ -10,14 +13,16 @@ public enum Affiliation { Red = 0, Blue = 1, Green = 2, None = -1};
 public class GameManager : MonoBehaviour
 {
     public GameObject uiCanvas;
-    public GameObject districtPrefab; 
-	public GameObject nodePrefab;
-	public GameObject transitionPrefab; 
+    public GameObject districtPrefab;
+    public GameObject nodePrefab;
+    public GameObject transitionPrefab;
     GameObject[] nodes;
     List<Connector> connectors;
     List<Unit> units;
     List<DistrictCollider2> districts;
     List<GameObject[]> dist; //THIS IS THE LIST OF CYCLES AS NODES. USE THIS TO MAKE DISTRICTS
+    Graph graph = new Graph();
+    List<List<Node>> newCycles = new List<List<Node>>();
     /// </summary>
     List<int[]> cycles;
     //number of districts each party controls
@@ -73,8 +78,11 @@ public class GameManager : MonoBehaviour
         {
             uiManager = uiCanvas.GetComponent<UIManager>();
         }
+        foreach (GameObject node in nodes)
+        {
+            graph.AddVertex(node.GetComponent<Node>());
+        }
 
-        
         //partyDistricts[(int)Affiliation.Red]++;
         //Create a background collider for raycast checks	
         GameObject backgroundPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
@@ -109,7 +117,7 @@ public class GameManager : MonoBehaviour
             {
                 RaycastHit unitHit;
                 Transform unitObjectHit = null;
-                Ray unitRay = new Ray(u.transform.position + 2.0f*Vector3.down, Vector3.down);//Camera.main.ScreenPointToRay(Input.mousePosition);
+                Ray unitRay = new Ray(u.transform.position + 2.0f * Vector3.down, Vector3.down);//Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(unitRay, out unitHit) && unitHit.transform.gameObject.GetComponent<DistrictCollider2>() != null)
                 {
                     unitObjectHit = unitHit.transform;
@@ -151,6 +159,7 @@ public class GameManager : MonoBehaviour
             //Debug.Log("districts to save: " + saveDistricts.Count + "\tDistricts remaining: "+districts.Count);
         }
         #endregion
+
 
         for (int i = 0; i < partyDistricts.Length; i++)
         {
@@ -205,6 +214,11 @@ public class GameManager : MonoBehaviour
             // working click through
             for (Node endNode = objectHit.GetComponent<Node>(); startNode != null && endNode != null && startNode != endNode && validConnector;)
             {
+                if (!graph.EdgeExists(startNode, endNode))
+                {
+                    graph.addEdge(new Edge(graph.IndexOfVertex(startNode), graph.IndexOfVertex(endNode)));
+                    print("Graph: " + graph.ToString());
+                }
                 Connector c = (Connector)Instantiate(connectorPrefab);
                 c.A = startNode;
                 c.B = endNode;
@@ -222,6 +236,7 @@ public class GameManager : MonoBehaviour
                     connectors.Add(c);
                     startNode = endNode;
                 }
+
                 break;
             }
         }
@@ -234,6 +249,8 @@ public class GameManager : MonoBehaviour
                 tempConnector = null;
             }
             CheckCycles();
+            CycleSearch();
+            
         }
         #endregion
         #region right click
@@ -242,10 +259,13 @@ public class GameManager : MonoBehaviour
             //Debug.Log("click");
             for (Connector ctr = objectHit.GetComponent<Connector>(); ctr != null;)
             {
+                graph.RemoveAllEdges(graph.IndexOfVertex(ctr.A), graph.IndexOfVertex(ctr.B));
+                print("Graph: " + graph.ToString());
                 //Debug.Log("Removing conenector");
                 connectors.Remove(ctr);
                 Destroy(ctr.gameObject);
                 CheckCycles();
+                CycleSearch();
                 break;
             }
         }
@@ -278,7 +298,7 @@ public class GameManager : MonoBehaviour
         }
 
 
-        if(Input.GetKeyDown(KeyCode.Y))
+        if (Input.GetKeyDown(KeyCode.Y))
         {
             Debug.Log(cycles.Count + " cycles");
             if (cycles.Count > 0)
@@ -342,7 +362,7 @@ public class GameManager : MonoBehaviour
             currentGreen += dist.rgb[1];
             currentBlue += dist.rgb[2];
 
-            
+
             //foreach (int v in dist.rgb)
             //{
             //    Unit voter = v.GetComponent<Unit>();
@@ -410,7 +430,7 @@ public class GameManager : MonoBehaviour
         //check for win condition
         bool allDistricted = (currentBlue == totalBlue) && (currentRed == totalRed) && (currentGreen == totalGreen);
         bool rightDistrictPop = true;
-        
+
         foreach (DistrictCollider2 district in districts)
         {
             if (district.NumUnits != units.Count / goalDistricts)
@@ -423,8 +443,8 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            Debug.Log("Goal Met: " +goalMet);
-            Debug.Log("Correct num districts: " +(districts.Count == goalDistricts));
+            Debug.Log("Goal Met: " + goalMet);
+            Debug.Log("Correct num districts: " + (districts.Count == goalDistricts));
             Debug.Log("All units Districted: " + (allDistricted));
             Debug.Log("winning team has enough: " + (partyDistricts[(int)winningTeam] >= Mathf.RoundToInt(((goalDistricts + 1) / 3) + 1)));
         }
@@ -440,13 +460,95 @@ public class GameManager : MonoBehaviour
         string name = Application.loadedLevelName;
         string[] split = name.Split('_');
         int num;
-        if( int.TryParse(split[split.Length - 1], out num))
+        if (int.TryParse(split[split.Length - 1], out num))
         {
             num += 1;
             string nextLevelString = "Lvl_" + num;
             //Application.LoadLevel("Scenes/Levels/" + nextLevelString);
             ClearConnections();
             Application.LoadLevel(nextLevelString);
+        }
+    }
+
+    struct cycleCheckResult
+    {
+        public bool contains;
+        public List<Node> smallCycle;
+    }
+
+    private bool CompareCycles(List<Node> smaller, List<Node> larger)
+    {
+        foreach(Node node in smaller)
+        {
+            if(!larger.Contains(node))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private cycleCheckResult CycleContains(List<Node> first, List<Node> second)
+    {
+        if (first.Count >= second.Count)
+        {
+            cycleCheckResult result = new cycleCheckResult();
+            result.contains = CompareCycles(second, first);
+            result.smallCycle = first;
+            return result;
+        } else
+        {
+            cycleCheckResult result = new cycleCheckResult();
+            result.contains = CompareCycles(first, second);
+            result.smallCycle = second;
+            return result;
+        }
+    }
+
+    private void CycleSearch()
+    {
+        newCycles = graph.detectCycles(aboveLength: 3);
+        List<List<Node>> temp = new List<List<Node>>();
+        for (int i = 0; i < newCycles.Count - 1; i += 2)
+        {
+            if(newCycles[i].Count == newCycles[i + 1].Count && CompareCycles(smaller: newCycles[i], larger: newCycles[i + 1]))
+            {
+                temp.Add(newCycles[i]);
+            }
+        }
+        newCycles = new List<List<Node>>(temp);
+        temp.Clear();
+
+        for (int i = 0; i < newCycles.Count; i++)
+        {
+            temp.Add(newCycles[i]);
+            if( i > 0)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    cycleCheckResult comparison = CycleContains(first: newCycles[i], second: newCycles[j]);
+                    if (comparison.contains)
+                    {
+                        temp.Remove(comparison.smallCycle);
+                    }
+                }
+            }
+        }
+
+        newCycles = new List<List<Node>>(temp);
+        temp.Clear();
+        /*IEnumerable<IGrouping<Node, List<Node>>> groupedCycles = newCycles.AsEnumerable().GroupBy(cycle => cycle.First(), cycle => cycle);
+        foreach(IGrouping<Node, List<Node>> cycleGroup in groupedCycles)
+        {
+            cycleGroup.AsEnumerable().OrderBy(cycle => cycle.Count);
+            temp.Add(cycleGroup.First());
+        }
+
+        newCycles = new List<List<Node>>(temp);
+        */
+        foreach (List<Node> cycle in newCycles)
+        {
+            print(cycle.AsEnumerable().Select(node => node.name).Aggregate((total, next) => total += " -> " + next));
         }
     }
 

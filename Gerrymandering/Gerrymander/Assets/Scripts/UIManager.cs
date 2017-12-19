@@ -71,7 +71,7 @@ public class UIManager : MonoBehaviour {
             pauseMenu.transform.localPosition = new Vector3(0, 0, 0);
             pauseMenu.transform.localScale = new Vector3(1, 1, 1);
             pauseMenu.name = "PauseMenu";
-            Button closeBtn = pauseMenu.transform.FindChild("Button").GetComponent<Button>() as Button;
+            Button closeBtn = pauseMenu.transform.Find("Button").GetComponent<Button>() as Button;
             closeBtn.onClick.AddListener(delegate () { HidePauseMenu(); });
             paused = true;
         }
@@ -83,7 +83,7 @@ public class UIManager : MonoBehaviour {
 
         if (pausePrefab != null)
         {
-            Destroy(transform.FindChild("PauseMenu").gameObject);
+            Destroy(transform.Find("PauseMenu").gameObject);
             paused = false;
         }
     }
