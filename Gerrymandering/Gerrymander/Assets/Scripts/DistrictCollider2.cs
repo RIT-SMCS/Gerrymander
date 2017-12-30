@@ -62,9 +62,9 @@ public class DistrictCollider2 : MonoBehaviour {
 	/// <param name="vertices">The vector3 vertex locations of the district shape</param>
 	public void SetCollider(Vector3[] vertices)
 	{
-		Vector2[] temp = new Vector2[vertices.Length];
+		Vector2[] temp = new Vector2[vertices.Length - 1];
 		Vector3 tempTemp; 
-		for (int i = 0; i < vertices.Length; i++) {
+		for (int i = 0; i < vertices.Length - 1; i++) {
 			//take just the relevant x and z coordinates...
 			temp[i] = new Vector2(vertices[i].x, vertices[i].z); 
 			//And now we have to transform them into local coordinates, for use in the collider

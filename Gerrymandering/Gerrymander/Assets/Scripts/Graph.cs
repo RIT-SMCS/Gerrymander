@@ -6,7 +6,9 @@ using UnityEngine;
 
 
 public class Graph: System.Collections.IEnumerable {
+    //All vertices in the graph
     List<Node> vertices = new List<Node>();
+    //2D array of edges between vertices
     List<List<Edge>> edges = new List<List<Edge>>();
 
     public Graph()
@@ -17,6 +19,19 @@ public class Graph: System.Collections.IEnumerable {
     public Graph(List<Node> vertices)
     {
         this.vertices = vertices;
+        foreach (Node vertex in vertices)
+        {
+            edges.Add(new List<Edge>());
+        }
+    }
+
+    public void Clear()
+    {
+        this.edges = new List<List<Edge>>();
+        foreach(Node vertex in vertices)
+        {
+            edges.Add(new List<Edge>());
+        }
     }
 
     public int VertexCount()
@@ -52,7 +67,7 @@ public class Graph: System.Collections.IEnumerable {
     public List<Node> NeighborsForVertex(Node vertex)
     {
         int i = vertices.IndexOf(vertex);
-        if (i != -1)
+        if (i != -1 && i < edges.Count())
         {
             return NeighborsForIndex(i);
         }
@@ -84,10 +99,10 @@ public class Graph: System.Collections.IEnumerable {
     public bool EdgeExists(Node from, Node to)
     {
         int u = IndexOfVertex(from);
-        if(u != -1)
+        if(u != -1 && u < edges.Count())
         {
             int v = IndexOfVertex(to);
-            if(v != -1)
+            if(v != -1 && v < edges.Count())
             {
                 return EdgeExists(from: u, to: v);
             }
@@ -114,6 +129,7 @@ public class Graph: System.Collections.IEnumerable {
 
     public void addEdge(Edge edge)
     {
+         
         edges[edge.U].Add(edge);
         edges[edge.V].Add(edge.Reversed());
     }
@@ -174,28 +190,44 @@ public class Graph: System.Collections.IEnumerable {
     
     public List<List<Node>> detectCycles(int upToLength = int.MaxValue, int aboveLength = 0)
     {
+        //Empty list that will contain cycles, which are a list of nodes that  are connected
         List<List<Node>> cycles = new List<List<Node>>();
+        //Creates all possible paths by putting all vertices into their own list of noedes
         List<List<Node>> openPaths = vertices.AsEnumerable().Select(vertex => new List<Node> { vertex }).ToList<List<Node>>();
 
+        //While the list of possible paths is not empty
         while (openPaths.Count > 0)
         {
+
+            //pick the frontmost path, remove it from the list
             List<Node> openPath = openPaths.First();
             openPaths.RemoveAt(0);
 
+
+            //If the path is longer than the max length, return the current list of cycles
             if (openPath.Count > upToLength) { return cycles; }
+
+            //grab the end of the current path and the head of the path
             Node tail = openPath.Last(), head = openPath.First();
+
+            //if neither is null
             if (tail != null && head != null)
             {
+                //grab all of the vertices adjacent to the tail, and for each neighbor
                 List<Node> neighbors = NeighborsForVertex(tail);
                 foreach(Node neighbor in neighbors)
                 {
+                    //if that neighbor is ALSO the head node, and the path is at least as long as the minimum cycle length
                     if (neighbor == head && openPath.Count > aboveLength)
                     {
+                        //copy the open path, add the neighbor node, and then add the new cycle to the list of cycles
                         List<Node> copy = new List<Node>(openPath);
                         copy.Add(neighbor);
                         cycles.Add(copy);
+                    //otherwise, if the openPath doesn't contain the neighbor already, and the neighbor vertex has already been explored
                     } else if(!openPath.Contains(neighbor) && IndexOfVertex(neighbor) > IndexOfVertex(head))
                     {
+                        //copy the path, add the neighbor node, and then add the path back to the list of open Paths
                         List<Node> copy = new List<Node>(openPath);
                         copy.Add(neighbor);
                         openPaths.Add(copy);
@@ -204,6 +236,7 @@ public class Graph: System.Collections.IEnumerable {
             }
         }
 
+        //return the cycles list
         return cycles;
     }
 
