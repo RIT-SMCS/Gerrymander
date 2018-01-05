@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.iOS;
 
 public class UIManager : MonoBehaviour {
     GameManager gameManager;
@@ -14,6 +15,25 @@ public class UIManager : MonoBehaviour {
     bool paused = false;
 	// Use this for initialization
 	void Start () {
+        Rect safe = Screen.safeArea;
+
+
+
+
+        if (Device.generation == DeviceGeneration.iPhoneX)
+        {
+            gameObject.GetComponent<CanvasScaler>().matchWidthOrHeight = 0.8f;
+            GameObject topPanel = transform.Find("TopPanel").gameObject;
+            topPanel.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0, -50, 0);
+            topPanel.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 100);
+            topPanel.GetComponent<GridLayoutGroup>().padding.top = 50;
+
+            GameObject botPanel = transform.Find("BottomPanel").gameObject;
+            botPanel.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0, 42.5f, 0);
+            botPanel.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 85);
+            botPanel.GetComponent<GridLayoutGroup>().padding.bottom = 25;
+        }
+
 	    if(gmObj != null)
         {
             gameManager = gmObj.GetComponent<GameManager>();
@@ -34,6 +54,8 @@ public class UIManager : MonoBehaviour {
         textDict.Add(Ind, IndText);
 	}
 	
+
+
     public void SetText(GameObject obj, string newText)
     {
         textDict[obj].text = newText;
@@ -49,9 +71,6 @@ public class UIManager : MonoBehaviour {
     {
         if (!solved)
         {
-            /*GameObject victory = GameObject.Instantiate(winPrefab);
-            victory.transform.SetParent(transform);
-            victory.transform.localPosition = new Vector3(0, 0, 0);*/
 			gameManager.transitionPrefab.GetComponent<Transition>().FadeIn(); 
         }
         solved = true;
@@ -90,5 +109,13 @@ public class UIManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+        if (solved)
+        {
+            if(gameManager.transitionPrefab.GetComponent<Transition>().readyForNext) {
+                gameManager.NextLevel();
+            }
+        }
 	}
+
+
 }

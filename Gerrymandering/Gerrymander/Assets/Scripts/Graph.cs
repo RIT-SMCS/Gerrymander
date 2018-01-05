@@ -223,7 +223,42 @@ public class Graph: System.Collections.IEnumerable {
                         //copy the open path, add the neighbor node, and then add the new cycle to the list of cycles
                         List<Node> copy = new List<Node>(openPath);
                         copy.Add(neighbor);
-                        cycles.Add(copy);
+
+                        Node previousNode = copy.First();
+                        Node currentNode = copy[1];
+                        List<Vector2> Corners = new List<Vector2>();
+                        Corners.Add(previousNode.gridPosition);
+
+                        for (int i = 1; i < copy.Count() - 1; i++)
+                        {
+
+                            Node nextNode = copy[i + 1];
+                            if (previousNode != currentNode)
+                            {
+                                int prevIndex = int.Parse(previousNode.name.Substring("node ".Length - 1));
+                                int index = int.Parse(currentNode.name.Substring("node ".Length - 1));
+                                int nextIndex = int.Parse(nextNode.name.Substring("node ".Length - 1));
+
+                                int prevStride = index - prevIndex;
+                                int nextStride = nextIndex - index;
+                                if (nextStride != prevStride)
+                                {
+                                    Corners.Add(currentNode.gridPosition);
+                                }
+
+                            }
+                            previousNode = currentNode;
+                            currentNode = nextNode;
+                        }
+                        if(Mathf.Abs((int)districtArea(Corners)) <= 1)
+                        {
+                            cycles = cycles.Where(cycle => cycle.First() != copy.First()).ToList();
+                            cycles.Add(copy);
+                            openPaths = openPaths.Where(cycle => cycle.First() != copy.First()).ToList();
+
+                        } else {
+                            cycles.Add(copy);
+                        }
                     //otherwise, if the openPath doesn't contain the neighbor already, and the neighbor vertex has already been explored
                     } else if(!openPath.Contains(neighbor) && IndexOfVertex(neighbor) > IndexOfVertex(head))
                     {
@@ -239,6 +274,25 @@ public class Graph: System.Collections.IEnumerable {
         //return the cycles list
         return cycles;
     }
+
+    float districtArea(List<Vector2> Corners)
+    {
+        float area = 0.0f;
+        Vector2 p1 = new Vector2();
+        Vector2 p2 = new Vector2();
+        for (int i = 0; i < Corners.Count(); i++)
+        {
+            p1 = Corners[i];
+            p2 = Corners[(i + 1) % Corners.Count()];
+
+            float avgHeight = (p1.y + p2.y) / 2;
+            float width = p1.x - p2.x;
+            float snapArea = width * avgHeight;
+            area += snapArea;
+        }
+        return Mathf.Abs(area);
+    }
+
 
     override public string ToString()
     {

@@ -8,7 +8,8 @@ public class Transition : MonoBehaviour {
 	float transitionValue = 1.0f; 
 	public bool startVisible = true; 
 	bool ending = false;
-	public bool lastLevel = false; 
+	public bool lastLevel = false;
+    public bool readyForNext = false;
 
 	// Use this for initialization
 	void Start () {
@@ -30,8 +31,8 @@ public class Transition : MonoBehaviour {
 			if(color.a < 0.0f || color.a > 1.0f)
 				transitioning = false; 
 		}
-		if(ending && !transitioning && !lastLevel)
-			Application.LoadLevel (Application.loadedLevel + 1); 
+        if (ending && !transitioning && !lastLevel)
+            readyForNext = true;
 	}
 	
 	public void FadeOut()

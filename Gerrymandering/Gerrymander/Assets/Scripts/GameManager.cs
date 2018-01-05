@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System;
+using UnityEngine.SceneManagement;
 
 
 //awful coding practice.
@@ -39,9 +40,9 @@ public class GameManager : MonoBehaviour
 
     private Node startNode = null;
     private Connector tempConnector = null;
+    int nodeStride = -1;
+    bool split = false;
 
-    //bool split = false;
-    int split = -1;
 
     // Use this for initialization
     void Start()
@@ -51,8 +52,19 @@ public class GameManager : MonoBehaviour
         nodes = nodes.OrderByDescending(node => node.transform.position.x * 100 + node.transform.position.z).ToArray();
         for (int i = 1; i <= nodes.Count(); i++)  
         {
-            nodes[i - 1].name = "Node " + i;
+            nodes[i - 1].GetComponent<Node>().ID = i;
+            if (i > 1 && nodeStride == -1 && (int)nodes[i - 1].transform.position.x != (int)nodes[0].transform.position.x) {
+                nodeStride = i - 1;
+            }
         }
+
+        foreach (GameObject nodeObj in nodes) 
+        {
+            Node node = nodeObj.GetComponent<Node>();
+            node.gridPosition = new Vector2((node.ID - 1) % nodeStride, (node.ID - 1) / nodeStride);
+            print(nodeObj.name + ": " + node.gridPosition); 
+        }
+
         connectors = new List<Connector>();
         units = new List<Unit>();
         districts = new List<DistrictCollider2>();
@@ -77,7 +89,8 @@ public class GameManager : MonoBehaviour
 
             }
         }
-        //partyDistricts[(int)Affiliation.Red]++;	
+
+
         if (uiCanvas != null)
         {
             uiManager = uiCanvas.GetComponent<UIManager>();
@@ -87,7 +100,7 @@ public class GameManager : MonoBehaviour
             graph.AddVertex(node.GetComponent<Node>());
         }
 
-        //partyDistricts[(int)Affiliation.Red]++;
+
         //Create a background collider for raycast checks	
         GameObject backgroundPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
         backgroundPlane.transform.position = Vector3.zero;
@@ -106,10 +119,12 @@ public class GameManager : MonoBehaviour
         {
             partyDistricts[i] = 0;
         }
+
         #region mouse raycast
         RaycastHit hit;
         Transform objectHit = null;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
         if (Physics.Raycast(ray, out hit))
         {
             objectHit = hit.transform;
@@ -117,8 +132,10 @@ public class GameManager : MonoBehaviour
         else {
             objectHit = this.transform;
         }
+
         hit.point = new Vector3(hit.point.x, 0.0f, hit.point.z);
         #endregion
+
         #region left click
         if (Input.GetMouseButtonDown(0))
         { //left click down
@@ -175,6 +192,7 @@ public class GameManager : MonoBehaviour
                     c.name = "Connector_" + c.A.ID + "_" + c.B.ID;
                     connectors.Add(c);
                     startNode = endNode;
+                    split = true;
                 }
 
                 break;
@@ -188,7 +206,8 @@ public class GameManager : MonoBehaviour
                 Destroy(tempConnector.gameObject);
                 tempConnector = null;
             }
-            CheckCycles();
+            if (split)
+                CheckCycles();
 
         }
         #endregion
@@ -216,46 +235,6 @@ public class GameManager : MonoBehaviour
         #endregion
         //end raycast
 
-        #region debugs
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            Debug.Log("Connectors: " + connectors.Count);
-        }
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            Debug.Log("Nodes: " + nodes.Length);
-            foreach (GameObject n in nodes)
-            {
-                Debug.Log(n.GetComponent<Node>().ID);
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            NextLevel();
-        }
-
-
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            Debug.Log(cycles.Count + " cycles");
-            if (cycles.Count > 0)
-            {
-                Debug.Log("Cycles: ");
-                string str;
-                foreach (List<Node> c in cycles)
-                {
-                    str = "";
-                    foreach (Node n in c)
-                    {
-                        str += n.name + ",";
-                    }
-                    Debug.Log(str);
-                }
-            }
-        }
-        //do not make connectors if there is no valid district made
-        #endregion
 
         //update GUI
         #region Setting Text
@@ -300,23 +279,6 @@ public class GameManager : MonoBehaviour
             currentGreen += dist.rgb[1];
             currentBlue += dist.rgb[2];
 
-
-            //foreach (int v in dist.rgb)
-            //{
-            //    Unit voter = v.GetComponent<Unit>();
-            //    switch (voter.affiliation)
-            //    {
-            //        case Affiliation.Red:
-            //            currentRed += 1;
-            //            break;
-            //        case Affiliation.Blue:
-            //            currentBlue += 1;
-            //            break;
-            //        case Affiliation.Green:
-            //            currentGreen += 1;
-            //            break;
-            //    }
-            //}
         }
 
         int unitsInDistricts = currentRed + currentGreen + currentBlue;
@@ -395,17 +357,20 @@ public class GameManager : MonoBehaviour
 
     public void NextLevel()
     {
-        string name = Application.loadedLevelName;
-        string[] split = name.Split('_');
+        string name = SceneManager.GetActiveScene().name;
+        string[] splitName = name.Split('_');
         int num;
-        if (int.TryParse(split[split.Length - 1], out num))
+        if (int.TryParse(splitName[splitName.Length - 1], out num))
         {
             num += 1;
             string nextLevelString = "Lvl_" + num;
             //Application.LoadLevel("Scenes/Levels/" + nextLevelString);
             ClearConnections();
-            Application.LoadLevel(nextLevelString);
+            SceneManager.LoadScene(nextLevelString, LoadSceneMode.Single);
+
+
         }
+
     }
 
     struct cycleCheckResult
@@ -455,75 +420,81 @@ public class GameManager : MonoBehaviour
         List<List<Node>> temp = new List<List<Node>>();
 
         //enumerate by 2 to compare each Cycle
-        for (int i = 0; i < newCycles.Count - 1; i += 2)
-        {
-            //if cycles are the same size, and compare cycles returns true, then the lists describe the same cycle, so filter them
-            if(newCycles[i].Count == newCycles[i + 1].Count && CompareCycles(smaller: newCycles[i], larger: newCycles[i + 1]))
-            {
-                temp.Add(newCycles[i]);
-            }
-        }
-        //newCycles becomes the temp array, and temp is cleared
-        newCycles = new List<List<Node>>(temp);
-        temp.Clear();
-
-  /*      //for each cycle in newCycles
-        for (int i = 0; i < newCycles.Count; i++)
-        {
-            //add the current cycle to temp, and as long as have added a single cycle to the array
-            temp.Add(newCycles[i]);
-            if( i > 0)
-            {
-                //iterate from 0 to the current index through newCycles
-                for (int j = 0; j < i; j++)
-                {
-                    //compare the two cycles, and see if either is contained in the other.
-                    cycleCheckResult comparison = CycleContains(first: newCycles[i], second: newCycles[j]);
-                    //if one does contain the other
-                    if (comparison.contains)
-                    {
-                        //remove the LARGER cycle
-                        temp.Remove(comparison.largeCycle);
-                    }
-                }
-            }
-        }
-
-        newCycles = new List<List<Node>>(temp);
-        temp.Clear();*/
+        //for (int i = 0; i < newCycles.Count - 1; i += 2)
+        //{
+        //    //if cycles are the same size, and compare cycles returns true, then the lists describe the same cycle, so filter them
+        //    if(newCycles[i].Count == newCycles[i + 1].Count && CompareCycles(smaller: newCycles[i], larger: newCycles[i + 1]))
+        //    {
+        //        temp.Add(newCycles[i]);
+        //    }
+        //}
+        ////newCycles becomes the temp array, and temp is cleared
+        //newCycles = new List<List<Node>>(temp);
+        //temp.Clear();
 
         Lookup<Node, List<Node>> cycleGroup = (Lookup<Node, List<Node>>)newCycles.ToLookup(cycle => cycle.First());
 
         foreach (IGrouping<Node, List<Node>> nodeGroup in cycleGroup)
         {
-            int length = int.MaxValue;
-            List<Node> shortest = null;
-            print(nodeGroup.Key.name); 
-            // Iterate through each value in the IGrouping and print its value.
-            foreach (List<Node> cycle in nodeGroup)
+            //int length = int.MaxValue;
+            //List<Node> shortest = null;
+            print(nodeGroup.Key.name);
+            List<List<Node>> sorted = nodeGroup.ToList().OrderBy(cycle => cycle.Count()).ToList();
+            int smallestArea = int.MaxValue;
+            List<Node> smallestCycle = null;
+            foreach (List<Node> cycle in sorted)
             {
-                print(cycle.AsEnumerable().Select(node => node.name).Aggregate((total, next) => total += " -> " + next));                
-                if (cycle.Count() < length)
+                print(cycle.AsEnumerable().Select(node => node.name).Aggregate((total, next) => total += " -> " + next));
+                print(cycle.Count());
+
+                //int stride = 0;
+                Node previousNode = cycle.First();
+                Node currentNode = cycle[1];
+                List<Vector2> Corners = new List<Vector2>();
+                Corners.Add(previousNode.gridPosition);
+
+                for (int i = 1; i < cycle.Count() - 1; i++)
                 {
-                    length = cycle.Count();
-                    shortest = cycle;
+                    
+                    Node nextNode = cycle[i + 1];
+                    if (previousNode != currentNode)
+                    {
+                        int prevIndex = int.Parse(previousNode.name.Substring("node ".Length - 1));
+                        int index = int.Parse(currentNode.name.Substring("node ".Length - 1));
+                        int nextIndex = int.Parse(nextNode.name.Substring("node ".Length - 1));
+
+                        int prevStride = index - prevIndex;
+                        int nextStride = nextIndex - index; 
+                        if (nextStride != prevStride)
+                        {
+                            Corners.Add(currentNode.gridPosition);
+                        }
+
+                    }
+                    previousNode = currentNode;
+                    currentNode = nextNode;
                 }
+                foreach (Vector2 corner in Corners)
+                {
+                    print(corner); 
+                }
+
+                int area = (int)districtArea(Corners);
+                print(area); 
+                if (area < smallestArea)
+                {
+                    smallestArea = area;
+                    smallestCycle = cycle;
+                } 
             }
-            temp.Add(shortest);
+
+
+            temp.Add(smallestCycle);
         }
 
         newCycles = new List<List<Node>>(temp);
         temp.Clear();
 
-        /*IEnumerable<IGrouping<Node, List<Node>>> groupedCycles = newCycles.AsEnumerable().GroupBy(cycle => cycle.First(), cycle => cycle);
-        foreach(IGrouping<Node, List<Node>> cycleGroup in groupedCycles)
-        {
-            cycleGroup.AsEnumerable().OrderBy(cycle => cycle.Count);
-            temp.Add(cycleGroup.First());
-        }
-
-        newCycles = new List<List<Node>>(temp);
-        */
         newCycles = newCycles.OrderBy(cycle => cycle.Count()).ToList();
         print("Cycles: ");
         foreach (List<Node> cycle in newCycles)
@@ -534,61 +505,20 @@ public class GameManager : MonoBehaviour
 
     }
 
-    /// <summary>
-    /// http://stackoverflow.com/questions/526331/cycles-in-an-undirected-graph
-    /// hard vs soft visit
-    /// soft visit until you hit a cycle or run out of neighbors, then mark as hard.
-    /// For unlinked branches, check for nodes not contained in the hard visit graph.
-    /// 
-    /// professional research paper on the subject
-    /// http://arxiv.org/pdf/1205.2766.pdf
-    /// naive implementation of paper alg in c# and java
-    /// http://stackoverflow.com/questions/12367801/finding-all-cycles-in-undirected-graphs
-    ///     
-    /// </summary>
-    /// <param name="map"></param>
-    /// <param name="startNode"></param>
-    /// <returns></returns>
-    private List<Node> GetPath(Dictionary<Node, List<Node>> map, Node startNode)
-    {
-        //checkForDistricts(n.GetComponent<Node>());
-        Dictionary<Node, Node> prev = new Dictionary<Node, Node>();
-        List<Node> visited = new List<Node>();
-        //Queue<Node> queue = new Queue<Node>();
-        Stack<Node> stack = new Stack<Node>();
-        stack.Push(startNode);
-        prev[startNode] = null;
-        //start breadth-first
-        while (stack.Count > 0)
-        {
-            Node curr = stack.Pop(); // get current node
-            visited.Add(curr);  //add to visited
-            foreach (Node neighbor in map[curr]) //check currents neighbors
-            {
-                if (neighbor == startNode && prev[curr] != startNode) //if a neighbor is my start node and I've seen enough nodes to maybe have a path
-                {
-                    List<Node> path = new List<Node>();
-                    Node temp = curr;
-                    while (temp != startNode)
-                    {
-                        path.Add(temp);
-                        temp = prev[temp];
-                    }
-                    if (path.Count < 2) //too short
-                    {
-                        continue;
-                    }
-                    path.Add(startNode);
-                    return path;
-                }
-                if (!visited.Contains(neighbor)) //if i've already been to the neighbor, skip
-                {
-                    prev[neighbor] = curr; //set the neighbors previous node to be the current node
-                    stack.Push(neighbor); //add the neighbor to the queue
-                }
-            }
+    float districtArea(List<Vector2> Corners) {
+        float area = 0.0f;
+        Vector2 p1 = new Vector2();
+        Vector2 p2 = new Vector2();
+        for (int i = 0; i < Corners.Count(); i++){
+            p1 = Corners[i];
+            p2 = Corners[(i + 1) % Corners.Count()];
+
+            float avgHeight = (p1.y + p2.y) / 2;
+            float width = p1.x - p2.x;
+            float snapArea = width * avgHeight;
+            area += snapArea;
         }
-        return null; //found no path, return null
+        return Mathf.Abs(area);
     }
 
 
@@ -606,9 +536,12 @@ public class GameManager : MonoBehaviour
         c.transform.localScale = new Vector3(0.5f, 0.5f, 0.95f * (initPoint - endPoint).magnitude - displacement);
     }
 
+    /// <summary>
+    /// Checks for Cycles to create districts with
+    /// </summary>
     private void CheckCycles()
     {
-        split = 1;
+        
         if (connectors.Count > 2)
         {
             for (int i = 0; i < districts.Count; ++i)
@@ -617,16 +550,13 @@ public class GameManager : MonoBehaviour
             }
             districts.Clear();
             cycles = CycleSearch();
-            //CheckSuper();
             List<GameObject[]> temp = new List<GameObject[]>();
             foreach (List<Node> c in cycles)
             {
                 temp.Add(c.Select(node => node.gameObject).ToArray());
             }
             dist = temp;
-            //dist.Sort(delegate (GameObject[] a, GameObject[] b) { return a.Length.CompareTo(b.Length); } );
 
-            #region MARK: How to build district colliders
             for (int k = 0; k < cycles.Count; ++k)
             {
                 if (k < dist.Count)
@@ -637,7 +567,7 @@ public class GameManager : MonoBehaviour
                     {
                         str += "," + c[i].GetComponent<Node>().ID;
                     }
-                    //Debug.Log(str);
+
                     GameObject newDistrict = Instantiate(districtPrefab) as GameObject;
                     newDistrict.GetComponent<DistrictCollider2>().SetCollider(c);
                     districts.Add(newDistrict.GetComponent<DistrictCollider2>());
@@ -646,22 +576,8 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            #endregion
-
-            //foreach (GameObject[] c in dist)
-            //{
-            //    //SARAH: MAKE DISTRICT HERE
-            //    string str = "" + c[0].GetComponent<Node>().ID;
-            //    for (int i = 1; i < c.Length; ++i)
-            //    {
-            //        str += "," + c[i].GetComponent<Node>().ID;
-            //    }
-            //    Debug.Log(str);
-            //    GameObject newDistrict = Instantiate(districtPrefab) as GameObject;
-            //    newDistrict.GetComponent<DistrictCollider2>().SetCollider(c);
-            //    districts.Add(newDistrict.GetComponent<DistrictCollider2>());
-            //}
         }
+        split = false;
     }
 
     string PrintArray(int[] arr)
@@ -673,58 +589,6 @@ public class GameManager : MonoBehaviour
         }
         return str;
     }
-    /*void CheckSuper()
-    {
-        List<int[]> toRemove = new List<int[]>();
-        foreach (List<Node> c in cycles)
-        {
-            foreach (List<Node> d in cycles)
-            {
-                if (c != d)
-                {
-                    if (c.Length < d.Length)
-                    {
-                        if (IsSubset(d, c))
-                        {
-                            toRemove.Add(d);
-                           //Debug.Log(PrintArray(c) + " is subset of " + PrintArray(d));
-                        }                      
-                    }
-                    if (d.Length < c.Length)
-                    {
-                        if (IsSubset(c, d))
-                        {
-                            toRemove.Add(c);
-                            //Debug.Log(PrintArray(d) + " is subset of " + PrintArray(c));
-                        }
-                    }
-                }
-            }
-        }
-        foreach (int[] c in toRemove)
-        {
-            //cycles.Remove(c);
-        }
-    }*/
-
-    bool IsSubset(int[] a, int[] b)
-    {
-        int j = 0;
-        int i = 0;
-        for (i=0; i < b.Length; ++i)
-        {           
-            for(j = 0; j < a.Length; ++j)
-            {
-                if (b[i] == a[j])
-                    break;                
-            }
-            if (j == a.Length)
-                return false;
-        }
-        return true;
-    }
-
-    #region Find Cycles take 1
 
     public void ClearConnections()
     {
@@ -744,222 +608,5 @@ public class GameManager : MonoBehaviour
         }
         districts.Clear();
     }
-
-    //void checkForDistricts(Node first, Node curr)
-    //{        
-    //    //int[,] matrix = createAdjMatrix(connectors);
-    //    if(curr == first)
-    //    {
-    //        districts.Add(new District());
-    //        return;
-    //    }
-    //    for(int i = 0; i < curr.GetConnectors().Count; i++)
-    //    {
-    //        if (!curr.GetConnectors()[i].isVisited)
-    //        {
-    //            if (curr.GetConnectors()[i].A != curr)
-    //            {
-    //                curr.GetConnectors()[i].isVisited = true;
-    //                checkForDistricts(first, curr.GetConnectors()[i].A);
-    //                curr.GetConnectors()[i].isVisited = false;
-    //            }
-    //            else
-    //            {
-    //                curr.GetConnectors()[i].isVisited = true;
-    //                checkForDistricts(first, curr.GetConnectors()[i].B);
-    //                curr.GetConnectors()[i].isVisited = false;
-    //            }
-    //        }
-    //    }               
-    //}
-
-  
-
-    Dictionary<Node, List<Node>> CreateAdjMap()
-    {
-        Dictionary<Node, List<Node>> map = new Dictionary<Node, List<Node>>();
-        foreach (GameObject go in nodes)
-        {
-            map[go.GetComponent<Node>()] = new List<Node>();
-        }
-        foreach (Connector c in connectors)
-        {
-            if (!map.ContainsKey(c.A))
-            {
-                map[c.A] = new List<Node>();
-            }
-            map[c.A].Add(c.B);
-
-            if (!map.ContainsKey(c.B))
-            {
-                map[c.B] = new List<Node>();
-            }
-            map[c.B].Add(c.A);
-        }
-
-        return map;
-    }
-    #endregion
-
-    #region Find Cycles take 2
-
-    int[,] CreateAdjMatrix()
-    {
-        int[,] matrix = new int[nodes.Length, nodes.Length];
-        foreach (Connector c in connectors)
-        {
-            matrix[c.A.ID - 1, c.B.ID - 1] = 1;
-            matrix[c.B.ID - 1, c.A.ID - 1] = 1;
-        }
-        return matrix;
-    }
-
-    int[,] CreateAdjGraph()
-    {
-        int[,] graph = new int[connectors.Count, 2];
-        for (int i = 0; i < connectors.Count; ++i)
-        {
-            graph[i, 0] = connectors[i].A.ID;
-            graph[i, 1] = connectors[i].B.ID;
-
-        }
-        return graph;
-    }
-
-    List<int[]> GetCycles()
-    {
-        //int[,] adj = CreateAdjMatrix();
-        int[,] graph = CreateAdjGraph();
-        List<int[]> cycles = new List<int[]>();
-
-        for (int i = 0; i < nodes.Length; ++i)
-        {
-            FindNewCycles(graph, cycles, new int[] { i+1 });
-        }
-
-        //for (int i = 0; i < graph.GetLength(0); ++i)
-        //{
-        //    for (int j = 0; j < graph.GetLength(1); ++j)
-        //    {
-        //
-        //        FindNewCycles(graph, cycles, new int[] { graph[i, j] });
-        //    }
-        //}
-        return cycles;
-    }
-
-    void FindNewCycles(int[,] graph, List<int[]> cycles, int[] path)
-    {
-        int n = path[0];
-        int x;
-        int[] subPath = new int[path.Length + 1];
-
-        for (int i = 0; i < graph.GetLength(0); ++i) //i is the Row in our connection matrix
-        {
-            for (int y = 0; y <= 1; ++y) ///y is the col
-            {
-                if (graph[i, y] == n) //current node
-                {
-                    x = graph[i, (y + 1) % 2];//the pair of i,y
-                    if (!IsVisited(x, path)) //havent seen node yet
-                    {
-                        subPath[0] = x; //new path starts with pair
-                        System.Array.Copy(path, 0, subPath, 1, path.Length);
-                        FindNewCycles(graph, cycles, subPath);
-                    } else if (path.Length > 2 && x == path[path.Length-1]){ //found cycle
-                        int[] normalized = Normalize(path);//normalize
-                        int[] inverted = Invert(path);//invert
-                        if (IsNew(normalized, cycles) && IsNew(inverted, cycles)) // isnew normalized and isnew inverted
-                        {
-                            cycles.Add(normalized);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    int FindSmallest(int[] path)
-    {
-        int min = path[0];
-        
-        foreach (int p in path)
-        {
-            if (p < min) min = p;
-        }
-
-        return min;
-    }
-
-    int[] Normalize(int[] path)
-    {
-        int[] p = new int[path.Length];
-        int x = FindSmallest(path);
-        int n;
-
-        System.Array.Copy(path, 0, p, 0, path.Length);
-
-        while(p[0] != x)
-        {
-            n = p[0];
-            System.Array.Copy(p, 1, p, 0, p.Length - 1);
-            p[p.Length - 1] = n;
-        }
-
-        return p;
-    }
-
-    int[] Invert(int[] path)
-    {
-        int[] p = new int[path.Length];
-
-        for(int i =0; i < path.Length; ++i)
-        {
-            p[i] = path[path.Length - 1 - i];
-        }
-
-        return Normalize(p);
-    }
-
-    bool Equals(int[] a, int[] b)
-    {
-        bool ret = (a[0] == b[0]) && (a.Length == b.Length);
-
-        for(int i = 1; ret && (i < a.Length); ++i)
-        {
-            if(a[i] != b[i])
-            {
-                ret = false;
-            }
-        }
-
-        return ret;
-    }
-
-    bool IsVisited(int n, int[] path)
-    {
-        foreach (int i in path)
-        {
-            if (i == n)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool IsNew(int[] path, List<int[]> cycles)
-    {
-        foreach(int[] p in cycles)
-        {
-            if(Equals(p, path))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-    #endregion
 }
 
