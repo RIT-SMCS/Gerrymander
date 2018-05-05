@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System;
 using UnityEngine.SceneManagement;
+using Unity.Collections;
+using Unity.Jobs;
 
 
 //awful coding practice.
@@ -62,7 +64,7 @@ public class GameManager : MonoBehaviour
         {
             Node node = nodeObj.GetComponent<Node>();
             node.gridPosition = new Vector2((node.ID - 1) % nodeStride, (node.ID - 1) / nodeStride);
-            print(nodeObj.name + ": " + node.gridPosition); 
+            //print(nodeObj.name + ": " + node.gridPosition); 
         }
 
         connectors = new List<Connector>();
@@ -218,7 +220,7 @@ public class GameManager : MonoBehaviour
             for (Connector ctr = objectHit.GetComponent<Connector>(); ctr != null;)
             {
                 graph.RemoveAllEdges(graph.IndexOfVertex(ctr.A), graph.IndexOfVertex(ctr.B));
-                print("Graph: " + graph.ToString());
+                //print("Graph: " + graph.ToString());
                 //Debug.Log("Removing conenector");
                 connectors.Remove(ctr);
                 Destroy(ctr.gameObject);
@@ -413,6 +415,8 @@ public class GameManager : MonoBehaviour
 
     private List<List<Node>> CycleSearch()
     {
+
+        
         //get the list of all cycles, with a minimum length of 3 to prevent line cycles
         newCycles = graph.detectCycles(aboveLength: 3);
 
@@ -436,16 +440,13 @@ public class GameManager : MonoBehaviour
 
         foreach (IGrouping<Node, List<Node>> nodeGroup in cycleGroup)
         {
-            //int length = int.MaxValue;
-            //List<Node> shortest = null;
-            print(nodeGroup.Key.name);
             List<List<Node>> sorted = nodeGroup.ToList().OrderBy(cycle => cycle.Count()).ToList();
             int smallestArea = int.MaxValue;
             List<Node> smallestCycle = null;
             foreach (List<Node> cycle in sorted)
             {
-                print(cycle.AsEnumerable().Select(node => node.name).Aggregate((total, next) => total += " -> " + next));
-                print(cycle.Count());
+                //print(cycle.AsEnumerable().Select(node => node.name).Aggregate((total, next) => total += " -> " + next));
+                //print(cycle.Count());
 
                 //int stride = 0;
                 Node previousNode = cycle.First();
@@ -474,13 +475,13 @@ public class GameManager : MonoBehaviour
                     previousNode = currentNode;
                     currentNode = nextNode;
                 }
-                foreach (Vector2 corner in Corners)
-                {
-                    print(corner); 
-                }
+                //foreach (Vector2 corner in Corners)
+                //{
+                    //print(corner); 
+                //}
 
                 int area = (int)districtArea(Corners);
-                print(area); 
+                //print(area); 
                 if (area < smallestArea)
                 {
                     smallestArea = area;
@@ -496,11 +497,11 @@ public class GameManager : MonoBehaviour
         temp.Clear();
 
         newCycles = newCycles.OrderBy(cycle => cycle.Count()).ToList();
-        print("Cycles: ");
-        foreach (List<Node> cycle in newCycles)
-        {
-            print(cycle.AsEnumerable().Select(node => node.name).Aggregate((total, next) => total += " -> " + next));
-        }
+        //print("Cycles: ");
+        //foreach (List<Node> cycle in newCycles)
+        //{
+            //print(cycle.AsEnumerable().Select(node => node.name).Aggregate((total, next) => total += " -> " + next));
+        //}
         return newCycles;
 
     }
@@ -580,7 +581,7 @@ public class GameManager : MonoBehaviour
         split = false;
     }
 
-    string PrintArray(int[] arr)
+    string printArray(int[] arr)
     {
         string str = "" + arr[0];
         for (int i = 1; i < arr.Length; ++i)
@@ -592,9 +593,9 @@ public class GameManager : MonoBehaviour
 
     public void ClearConnections()
     {
-        print(graph.edgeCount());;
+        //print(graph.edgeCount());;
         graph.Clear();
-        print(graph.edgeCount()); ;
+        //print(graph.edgeCount()); ;
 
         while (connectors.Count > 0)
         {

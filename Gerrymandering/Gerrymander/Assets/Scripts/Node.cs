@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 using System.Collections;
+
+public struct NodeData: IComponentData
+{
+    public Vector2 gridPosition = new Vector2();
+}
 
 public class Node : MonoBehaviour
 {
-    private List<Connector> connectors;
     public static int GLOBAL_ID = 0;
     private int id = -1;
-    public Vector2 gridPosition = new Vector2();
+    
 
     public int ID
     {
@@ -28,6 +33,4 @@ public class Node : MonoBehaviour
 	void Update () {
 	
 	}
-
-    public List<Connector> GetConnectors() { return connectors; }
 }
