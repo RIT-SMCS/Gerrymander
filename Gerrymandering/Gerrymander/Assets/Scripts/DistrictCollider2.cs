@@ -11,7 +11,6 @@ public class DistrictCollider2 : MonoBehaviour {
 	public List<GameObject> units = new List<GameObject> (); 
 	public int[] rgb;
 	public Affiliation winner; 
-	bool calcIt = false;
     public int NumUnits = 0;
 
 	public DistrictCollider2(GameObject[] points)

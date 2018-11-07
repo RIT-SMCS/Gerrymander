@@ -226,8 +226,8 @@ public class Graph: System.Collections.IEnumerable {
 
                         Node previousNode = copy.First();
                         Node currentNode = copy[1];
-                        List<Vector2> Corners = new List<Vector2>();
-                        Corners.Add(previousNode.gridPosition);
+                        List<GridCoordinate> Corners = new List<GridCoordinate>();
+                        Corners.Add(previousNode.GridPosition);
 
                         for (int i = 1; i < copy.Count() - 1; i++)
                         {
@@ -243,14 +243,14 @@ public class Graph: System.Collections.IEnumerable {
                                 int nextStride = nextIndex - index;
                                 if (nextStride != prevStride)
                                 {
-                                    Corners.Add(currentNode.gridPosition);
+                                    Corners.Add(currentNode.GridPosition);
                                 }
 
                             }
                             previousNode = currentNode;
                             currentNode = nextNode;
                         }
-                        if(Mathf.Abs((int)districtArea(Corners)) <= 1)
+                        if(Mathf.Abs((districtArea(Corners))) <= 1)
                         {
                             cycles = cycles.Where(cycle => cycle.First() != copy.First()).ToList();
                             cycles.Add(copy);
@@ -275,11 +275,11 @@ public class Graph: System.Collections.IEnumerable {
         return cycles;
     }
 
-    float districtArea(List<Vector2> Corners)
+    float districtArea(List<GridCoordinate> Corners)
     {
         float area = 0.0f;
-        Vector2 p1 = new Vector2();
-        Vector2 p2 = new Vector2();
+        GridCoordinate p1 = new GridCoordinate();
+        GridCoordinate p2 = new GridCoordinate();
         for (int i = 0; i < Corners.Count(); i++)
         {
             p1 = Corners[i];

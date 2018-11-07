@@ -8,6 +8,8 @@ using System;
 using UnityEngine.SceneManagement;
 using Unity.Collections;
 using Unity.Jobs;
+using System.Threading.Tasks;
+using Voxel;
 
 
 //awful coding practice.
@@ -25,7 +27,6 @@ public class GameManager : MonoBehaviour
     List<DistrictCollider2> districts;
     List<GameObject[]> dist; //THIS IS THE LIST OF CYCLES AS NODES. USE THIS TO MAKE DISTRICTS
     Graph graph = new Graph();
-    List<List<Node>> newCycles = new List<List<Node>>();
     /// </summary>
     List<List<Node>> cycles;
     //number of districts each party controls
@@ -45,10 +46,14 @@ public class GameManager : MonoBehaviour
     int nodeStride = -1;
     bool split = false;
 
+    private JobHandle handle;
+    private CycleSortJob cycleSort;
+
 
     // Use this for initialization
     void Start()
     {
+        cycles = new List<List<Node>>();
         Node.GLOBAL_ID = 0;
         nodes = GameObject.FindGameObjectsWithTag("Node");
         nodes = nodes.OrderByDescending(node => node.transform.position.x * 100 + node.transform.position.z).ToArray();
@@ -63,7 +68,11 @@ public class GameManager : MonoBehaviour
         foreach (GameObject nodeObj in nodes) 
         {
             Node node = nodeObj.GetComponent<Node>();
-            node.gridPosition = new Vector2((node.ID - 1) % nodeStride, (node.ID - 1) / nodeStride);
+            
+            GridCoordinate nodePos = new GridCoordinate();
+            nodePos.x = (node.ID - 1) % nodeStride;
+            nodePos.y = (node.ID - 1) / nodeStride;
+            node.GridPosition = nodePos;
             //print(nodeObj.name + ": " + node.gridPosition); 
         }
 
@@ -375,6 +384,55 @@ public class GameManager : MonoBehaviour
 
     }
 
+    private void LateUpdate()
+    {
+        if (!handle.IsCompleted || cycleSort.resultCycles.Length == 0) return;
+
+        handle.Complete();
+
+        List<List<Node>> newCycles = new List<List<Node>>();
+        newCycles = ConvertCycles(cycleSort.resultCycles);
+        cycleSort.cyclesList.Dispose();
+        cycleSort.resultCycles.Dispose();
+       
+
+        newCycles = newCycles.OrderBy(cycle => cycle.Count()).ToList();
+        //print("Cycles: ");
+        //foreach (List<Node> cycle in newCycles)
+        //{
+        //print(cycle.AsEnumerable().Select(node => node.name).Aggregate((total, next) => total += " -> " + next));
+        //}
+        List<GameObject[]> districtList = new List<GameObject[]>();
+        foreach (List<Node> c in newCycles)
+        {
+            districtList.Add(c.Select(node => node.gameObject).ToArray());
+        }
+        dist = districtList;
+
+        for (int k = 0; k < newCycles.Count; ++k)
+        {
+            if (k < dist.Count)
+            {
+                GameObject[] c = dist[k];
+                if (c.Length > 0)
+                {
+                    Node node = c[0].GetComponent<Node>();
+                    string str = "" + c[0].GetComponent<Node>().ID;
+                    for (int i = 1; i < c.Length; ++i)
+                    {
+                        str += "," + c[i].GetComponent<Node>().ID;
+                    }
+                }
+
+                GameObject newDistrict = Instantiate(districtPrefab) as GameObject;
+                newDistrict.GetComponent<DistrictCollider2>().SetCollider(c);
+                districts.Add(newDistrict.GetComponent<DistrictCollider2>());
+                newDistrict.name = "district_" + districts.Count;
+                newDistrict.GetComponent<Renderer>().enabled = true;
+            }
+        }
+    }
+
     struct cycleCheckResult
     {
         public bool contains;
@@ -413,15 +471,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private List<List<Node>> CycleSearch()
+    private void CycleSearch()
     {
-
+        List<List<Node>> newCycles = new List<List<Node>>();
         
         //get the list of all cycles, with a minimum length of 3 to prevent line cycles
         newCycles = graph.detectCycles(aboveLength: 3);
 
         //create an empty list of cycles
-        List<List<Node>> temp = new List<List<Node>>();
+        List<NativeList<Node.NodeData>> temp = new List<NativeList<Node.NodeData>>();
 
         //enumerate by 2 to compare each Cycle
         //for (int i = 0; i < newCycles.Count - 1; i += 2)
@@ -437,89 +495,73 @@ public class GameManager : MonoBehaviour
         //temp.Clear();
 
         Lookup<Node, List<Node>> cycleGroup = (Lookup<Node, List<Node>>)newCycles.ToLookup(cycle => cycle.First());
-
-        foreach (IGrouping<Node, List<Node>> nodeGroup in cycleGroup)
+        NativeList<BlitableArray<Cycle>> groupedCycleData = new NativeList<BlitableArray<Cycle>>(Allocator.Persistent);
+        List<List<List<Node>>> groupedCycles = new List<List<List<Node>>>();
+        foreach (GameObject obj in nodes)
         {
-            List<List<Node>> sorted = nodeGroup.ToList().OrderBy(cycle => cycle.Count()).ToList();
-            int smallestArea = int.MaxValue;
-            List<Node> smallestCycle = null;
-            foreach (List<Node> cycle in sorted)
-            {
-                //print(cycle.AsEnumerable().Select(node => node.name).Aggregate((total, next) => total += " -> " + next));
-                //print(cycle.Count());
-
-                //int stride = 0;
-                Node previousNode = cycle.First();
-                Node currentNode = cycle[1];
-                List<Vector2> Corners = new List<Vector2>();
-                Corners.Add(previousNode.gridPosition);
-
-                for (int i = 1; i < cycle.Count() - 1; i++)
-                {
-                    
-                    Node nextNode = cycle[i + 1];
-                    if (previousNode != currentNode)
-                    {
-                        int prevIndex = int.Parse(previousNode.name.Substring("node ".Length - 1));
-                        int index = int.Parse(currentNode.name.Substring("node ".Length - 1));
-                        int nextIndex = int.Parse(nextNode.name.Substring("node ".Length - 1));
-
-                        int prevStride = index - prevIndex;
-                        int nextStride = nextIndex - index; 
-                        if (nextStride != prevStride)
-                        {
-                            Corners.Add(currentNode.gridPosition);
-                        }
-
-                    }
-                    previousNode = currentNode;
-                    currentNode = nextNode;
-                }
-                //foreach (Vector2 corner in Corners)
-                //{
-                    //print(corner); 
-                //}
-
-                int area = (int)districtArea(Corners);
-                //print(area); 
-                if (area < smallestArea)
-                {
-                    smallestArea = area;
-                    smallestCycle = cycle;
-                } 
-            }
-
-
-            temp.Add(smallestCycle);
+            Node node = obj.GetComponent<Node>();
+            Predicate<List<Node>> startsWithNode = (List<Node> cycle) => { return cycle.First() == node; };
+            groupedCycles.Add(newCycles.FindAll(startsWithNode));
         }
 
-        newCycles = new List<List<Node>>(temp);
+        //Parallel.ForEach(groupedCycles, cycleList =>
+        for(int x = 0; x < groupedCycles.Count; x++)
+        {
+            List<List<Node>> cycleList = groupedCycles[x];
+            Cycle[] tempList = new Cycle[cycleList.Count];
+            //Parallel.ForEach(cycleList, cycle =>
+            for(int y = 0; y< cycleList.Count; y++)
+            {
+                List<Node> cycle = cycleList[y];
+                Node.NodeData[] tempCycle = new Node.NodeData[cycle.Count];
+                Cycle cycleData = new Cycle();
+                for(int z = 0; z < cycle.Count; z++)
+                {
+                    Node tempNode = cycle[z];
+                    tempCycle[z] = tempNode.data;
+                    
+                }
+                cycleData.nodes.Allocate(tempCycle.ToArray(), Allocator.Persistent);
+                tempList[y] = cycleData;
+            }
+            //);
+            BlitableArray<Cycle> tempBlitable = new BlitableArray<Cycle>();
+            tempBlitable.Allocate(tempList.ToArray(), Allocator.Persistent);
+            groupedCycleData.Add(tempBlitable);
+            /*tempBlitable.Dispose();
+            tempList.Dispose();*/
+        }
+        //);
+
+        NativeArray<Cycle> sortedCycleData = new NativeArray<Cycle>(groupedCycleData.Length, Allocator.Persistent);
+        cycleSort = new CycleSortJob();
+        cycleSort.cyclesList = groupedCycleData;
+        cycleSort.resultCycles = sortedCycleData;
+        handle = cycleSort.Schedule(groupedCycleData.Length, 1);
+        //cycleSort.Run(groupedCycleData.Length);
+
+        /*sortedCycleData.Dispose();
+        groupedCycleData.Dispose();*/
         temp.Clear();
-
-        newCycles = newCycles.OrderBy(cycle => cycle.Count()).ToList();
-        //print("Cycles: ");
-        //foreach (List<Node> cycle in newCycles)
-        //{
-            //print(cycle.AsEnumerable().Select(node => node.name).Aggregate((total, next) => total += " -> " + next));
-        //}
-        return newCycles;
-
     }
 
-    float districtArea(List<Vector2> Corners) {
-        float area = 0.0f;
-        Vector2 p1 = new Vector2();
-        Vector2 p2 = new Vector2();
-        for (int i = 0; i < Corners.Count(); i++){
-            p1 = Corners[i];
-            p2 = Corners[(i + 1) % Corners.Count()];
-
-            float avgHeight = (p1.y + p2.y) / 2;
-            float width = p1.x - p2.x;
-            float snapArea = width * avgHeight;
-            area += snapArea;
+    private List<List<Node>> ConvertCycles(NativeArray<Cycle> cyclesData)
+    {
+        List<List<Node>> convertedCycleList = new List<List<Node>>();
+        for (int j = 0; j < cyclesData.Length; j++)
+        {
+            Node.NodeData[] cycleData = cyclesData[j].nodes.ToArray();
+            List<Node> convertedCycle = new List<Node>();
+            for (int i = 0; i < cycleData.Length; i++)
+            {
+                Node.NodeData data = cycleData[i];
+                convertedCycle.Add(nodes[data.index].GetComponent<Node>());
+            }
+            if (convertedCycle.Count > 0) { 
+                convertedCycleList.Add(convertedCycle);
+            }
         }
-        return Mathf.Abs(area);
+        return convertedCycleList;
     }
 
 
@@ -550,32 +592,8 @@ public class GameManager : MonoBehaviour
                 Destroy(districts[i].gameObject);
             }
             districts.Clear();
-            cycles = CycleSearch();
-            List<GameObject[]> temp = new List<GameObject[]>();
-            foreach (List<Node> c in cycles)
-            {
-                temp.Add(c.Select(node => node.gameObject).ToArray());
-            }
-            dist = temp;
-
-            for (int k = 0; k < cycles.Count; ++k)
-            {
-                if (k < dist.Count)
-                {
-                    GameObject[] c = dist[k];
-                    string str = "" + c[0].GetComponent<Node>().ID;
-                    for (int i = 1; i < c.Length; ++i)
-                    {
-                        str += "," + c[i].GetComponent<Node>().ID;
-                    }
-
-                    GameObject newDistrict = Instantiate(districtPrefab) as GameObject;
-                    newDistrict.GetComponent<DistrictCollider2>().SetCollider(c);
-                    districts.Add(newDistrict.GetComponent<DistrictCollider2>());
-                    newDistrict.name = "district_" + districts.Count;
-                    newDistrict.GetComponent<Renderer>().enabled = true;
-                }
-            }
+            CycleSearch();
+            
 
         }
         split = false;
@@ -608,6 +626,102 @@ public class GameManager : MonoBehaviour
             Destroy(districts[i].gameObject);
         }
         districts.Clear();
+    }
+}
+
+
+
+public struct CycleSortJob: IJobParallelFor
+{
+    [ReadOnly]
+    public NativeList<BlitableArray<Cycle>> cyclesList;
+    public NativeArray<Cycle> resultCycles;
+
+    public void Execute(int index)
+    {
+        Cycle[] cycles = new Cycle[cyclesList[index].Length];
+        cycles = cyclesList[index].ToArray();
+        int smallestArea = int.MaxValue;
+        if(cycles.Length > 0)
+        {
+            Cycle smallestCycle = cycles[0];
+            for (int cycleIndex = 0; cycleIndex < cycles.Length; cycleIndex++)
+            {
+                Cycle cycle = cycles[cycleIndex];
+                //print(cycle.AsEnumerable().Select(node => node.name).Aggregate((total, next) => total += " -> " + next));
+                //print(cycle.Count());
+
+                //int stride = 0;
+
+                Node.NodeData previousNode = cycle.nodes[0];
+                Node.NodeData currentNode = cycle.nodes[1];
+                List<GridCoordinate> Corners = new List<GridCoordinate>();
+                GridCoordinate corner = new GridCoordinate();
+                corner.x = previousNode.x;
+                corner.y = previousNode.y;
+                Corners.Add(corner);
+
+                for (int i = 1; i < cycle.nodes.Length - 1; i++)
+                {
+
+                    Node.NodeData nextNode = cycle.nodes[i + 1];
+                    if (previousNode != currentNode)
+                    {
+                        int prevNodeIndex = previousNode.index - 1;
+                        int nodeIndex = currentNode.index - 1;
+                        int nextNodeIndex = nextNode.index - 1;
+
+                        int prevStride = nodeIndex - prevNodeIndex;
+                        int nextStride = nextNodeIndex - nodeIndex;
+                        if (nextStride != prevStride)
+                        {
+                            corner.x = currentNode.x;
+                            corner.y = currentNode.y;
+                            Corners.Add(corner);
+                        }
+
+                    }
+                    previousNode = currentNode;
+                    currentNode = nextNode;
+                }
+                //foreach (Vector2 corner in Corners)
+                //{
+                //print(corner); 
+                //}
+
+                int area = (int)districtArea(Corners);
+                //print(area); 
+                if (area < smallestArea)
+                {
+                    smallestArea = area;
+                    smallestCycle = cycle;
+                }
+
+            }
+            if (smallestArea != 0)
+            {
+                resultCycles[index] = smallestCycle;
+            }
+        }
+        
+    }
+
+    float districtArea(List<GridCoordinate> Corners)
+    {
+        float area = 0.0f;
+        GridCoordinate p1 = new GridCoordinate();
+        GridCoordinate p2 = new GridCoordinate();
+        for (int i = 0; i < Corners.Count(); i++)
+        {
+            p1 = Corners[i];
+            p2 = Corners[(i + 1) % Corners.Count()];
+
+            float avgHeight = (p1.y + p2.y) / 2;
+            float width = p1.x - p2.x;
+            float snapArea = width * avgHeight;
+            area += snapArea;
+        }
+        return Math.Abs(area);
     }
 }
 
