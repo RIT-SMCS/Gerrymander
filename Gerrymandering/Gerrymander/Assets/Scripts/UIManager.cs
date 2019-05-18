@@ -17,10 +17,7 @@ public class UIManager : MonoBehaviour {
 	void Start () {
         Rect safe = Screen.safeArea;
 
-
-
-
-        if (Device.generation == DeviceGeneration.iPhoneX)
+        if (Device.generation >= DeviceGeneration.iPhoneX && Device.generation <= DeviceGeneration.iPhoneXR)
         {
             gameObject.GetComponent<CanvasScaler>().matchWidthOrHeight = 0.8f;
             GameObject topPanel = transform.Find("TopPanel").gameObject;
