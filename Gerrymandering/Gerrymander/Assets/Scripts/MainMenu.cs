@@ -4,10 +4,18 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour {
+    int latestLevel = 0;
 
 	// Use this for initialization
 	void Start () {
-		
+        bool foundLast = false;
+        while (foundLast == false)
+        {
+            latestLevel += 1;
+            foundLast = PlayerPrefs.GetInt((latestLevel).ToString(), defaultValue: 0) <= 0;
+
+        }
+
 	}
 	
 	// Update is called once per frame
@@ -17,7 +25,7 @@ public class MainMenu : MonoBehaviour {
 
     public void LoadLatestLevel ()
     {
-        //TODO: get latest incomplete level scene, and open it.
+        SceneManager.LoadScene("Lvl_" + latestLevel, LoadSceneMode.Single);
     }
 
     public void LoadLevelSelect()

@@ -373,6 +373,7 @@ public class GameManager : MonoBehaviour
         int num;
         if (int.TryParse(splitName[splitName.Length - 1], out num))
         {
+            PlayerPrefs.SetInt(num.ToString(), 1);
             num += 1;
             string nextLevelString = "Lvl_" + num;
             //Application.LoadLevel("Scenes/Levels/" + nextLevelString);
