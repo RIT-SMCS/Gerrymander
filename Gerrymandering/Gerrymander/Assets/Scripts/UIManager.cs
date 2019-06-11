@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -87,7 +87,7 @@ public class UIManager : MonoBehaviour {
             pauseMenu.transform.localPosition = new Vector3(0, 0, 0);
             pauseMenu.transform.localScale = new Vector3(1, 1, 1);
             pauseMenu.name = "PauseMenu";
-            Button closeBtn = pauseMenu.transform.Find("Button").GetComponent<Button>() as Button;
+            Button closeBtn = pauseMenu.transform.Find("CloseButton").Find("Button").GetComponent<Button>() as Button;
             closeBtn.onClick.AddListener(delegate () { HidePauseMenu(); });
             paused = true;
         }
