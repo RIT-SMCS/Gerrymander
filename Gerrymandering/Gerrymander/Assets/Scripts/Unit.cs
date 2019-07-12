@@ -11,9 +11,9 @@ public class Unit : MonoBehaviour {
     // Use this for initialization
     void Awake()
     {
-        unitMaterials[(int)Affiliation.Red] = new Color(255.0f / 255.0f, 81.0f / 255.0f, 98.0f / 255.0f);
-        unitMaterials[(int)Affiliation.Green] =new Color(94.0f / 255.0f, 255.0f / 255.0f, 134.0f / 255.0f);
-        unitMaterials[(int)Affiliation.Blue] = new Color(74.0f / 255.0f, 94.0f / 255.0f, 232.0f / 255.0f);
+        unitMaterials[(int)Affiliation.Red] = new Color(243.0f / 255.0f, 201.0f / 255.0f, 105.0f / 255.0f);
+        unitMaterials[(int)Affiliation.Green] =new Color(35.0f / 255.0f, 150.0f / 255.0f, 127.0f / 255.0f);
+        unitMaterials[(int)Affiliation.Blue] = new Color(64.0f / 255.0f, 121.0f / 255.0f, 140.0f / 255.0f);
         //unitMaterials[(int)Affiliation.None] = MaterialSetup(new Color(255.0f / 255.0f, 81.0f / 255.0f, 98.0f / 255.0f));
         renderer = this.GetComponent<SpriteRenderer>(); 
         //renderer.sharedMaterials = unitMaterials;

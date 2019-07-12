@@ -254,18 +254,18 @@ public class GameManager : MonoBehaviour
         Color winColor = Color.white;
         if (winningTeam == Affiliation.Blue)
         {
-            winner = "Dems";
-            winColor = new Color(74.0f / 255.0f, 94.0f / 255.0f, 232.0f / 255.0f);
+            winner = "Blues";
+            winColor = new Color(64.0f / 255.0f, 121.0f / 255.0f, 140.0f / 255.0f);
         }
         else if (winningTeam == Affiliation.Red)
         {
-            winner = "Reps";
-            winColor = new Color(255.0f / 255.0f, 81.0f / 255.0f, 98.0f / 255.0f);
+            winner = "Yellows";
+            winColor = new Color(243.0f / 255.0f, 201.0f / 255.0f, 105.0f / 255.0f);
         }
         else
         {
-            winner = "Inds";
-            winColor = new Color(94.0f / 255.0f, 255.0f / 255.0f, 134.0f / 255.0f);
+            winner = "Greens";
+            winColor = new Color(35.0f / 255.0f, 150.0f / 255.0f, 127.0f / 255.0f);
         }
         uiManager.SetText(uiManager.Goal, goalDistricts + " Districts\n" + winner + " Win");
         uiManager.SetColor(uiManager.Goal, winColor);
