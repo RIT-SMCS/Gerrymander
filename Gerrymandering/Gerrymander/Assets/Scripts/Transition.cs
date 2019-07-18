@@ -31,7 +31,7 @@ public class Transition : MonoBehaviour {
 			if(color.a < 0.0f || color.a > 1.0f)
 				transitioning = false; 
 		}
-        if (ending && !transitioning && !lastLevel)
+        if (ending && !transitioning)
             readyForNext = true;
 	}
 	

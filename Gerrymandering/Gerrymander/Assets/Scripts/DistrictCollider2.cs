@@ -91,14 +91,14 @@ public class DistrictCollider2 : MonoBehaviour {
         ++NumUnits;
         rgb[faction]++;
 		if (rgb [0] > rgb [1] && rgb [0] > rgb [2]) {
-			winner = Affiliation.Red;
+			winner = Affiliation.Yellow;
 			this.gameObject.GetComponent<Renderer> ().material.color = new Color(243.0f / 255.0f, 201.0f / 255.0f, 105.0f / 255.0f);
         } else if (rgb [1] > rgb [0] && rgb [1] > rgb [2]) {
 			winner = Affiliation.Green;
 			this.gameObject.GetComponent<Renderer> ().material.color = new Color(35.0f / 255.0f, 150.0f / 255.0f, 127.0f / 255.0f);
         } else if (rgb [2] > rgb [0] && rgb [2] > rgb [1]) {
-			winner = Affiliation.Blue;
-			this.gameObject.GetComponent<Renderer> ().material.color = new Color(64.0f / 255.0f, 121.0f / 255.0f, 140.0f / 255.0f);
+			winner = Affiliation.Magenta;
+			this.gameObject.GetComponent<Renderer> ().material.color = new Color(234.0f / 255.0f, 100.0f / 255.0f, 222.0f / 255.0f);
         } else {
 			winner = Affiliation.None; 
 			this.gameObject.GetComponent<Renderer> ().material.color = Color.grey; 

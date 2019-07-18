@@ -11,9 +11,9 @@ public class Unit : MonoBehaviour {
     // Use this for initialization
     void Awake()
     {
-        unitMaterials[(int)Affiliation.Red] = new Color(243.0f / 255.0f, 201.0f / 255.0f, 105.0f / 255.0f);
+        unitMaterials[(int)Affiliation.Yellow] = new Color(243.0f / 255.0f, 201.0f / 255.0f, 105.0f / 255.0f);
         unitMaterials[(int)Affiliation.Green] =new Color(35.0f / 255.0f, 150.0f / 255.0f, 127.0f / 255.0f);
-        unitMaterials[(int)Affiliation.Blue] = new Color(64.0f / 255.0f, 121.0f / 255.0f, 140.0f / 255.0f);
+        unitMaterials[(int)Affiliation.Magenta] = new Color(234.0f / 255.0f, 100.0f / 255.0f, 222.0f / 255.0f);
         //unitMaterials[(int)Affiliation.None] = MaterialSetup(new Color(255.0f / 255.0f, 81.0f / 255.0f, 98.0f / 255.0f));
         renderer = this.GetComponent<SpriteRenderer>(); 
         //renderer.sharedMaterials = unitMaterials;
@@ -25,14 +25,14 @@ public class Unit : MonoBehaviour {
         {
             switch (affiliation)
             {
-                case Affiliation.Red:
-                    currentMaterial = unitMaterials[(int)Affiliation.Red];
+                case Affiliation.Yellow:
+                    currentMaterial = unitMaterials[(int)Affiliation.Yellow];
                     break;
                 case Affiliation.Green:
                     currentMaterial = unitMaterials[(int)Affiliation.Green];
                     break;
-                case Affiliation.Blue:
-                    currentMaterial = unitMaterials[(int)Affiliation.Blue];
+                case Affiliation.Magenta:
+                    currentMaterial = unitMaterials[(int)Affiliation.Magenta];
                     break;
             }
             renderer.color = currentMaterial;
@@ -53,7 +53,7 @@ public class Unit : MonoBehaviour {
 		if (other.gameObject.CompareTag ("District")) 
 		{
 			DistrictCollider2 dist = other.gameObject.GetComponent<DistrictCollider2>(); 
-			if(affiliation == Affiliation.Red)
+			if(affiliation == Affiliation.Yellow)
 				dist.AddUnit(0); 
 			else if(affiliation == Affiliation.Green)
 				dist.AddUnit(1); 

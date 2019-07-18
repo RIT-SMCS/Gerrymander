@@ -14,7 +14,7 @@ using Voxel;
 
 //awful coding practice.
 //change colors for color-blind people
-public enum Affiliation { Red = 0, Blue = 1, Green = 2, None = -1};
+public enum Affiliation { Yellow = 0, Magenta = 1, Green = 2, None = -1};
 public class GameManager : MonoBehaviour
 {
     public GameObject uiCanvas;
@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
     //number of districts each party controls
     int[] partyDistricts = new int[3];
     UIManager uiManager;
-    public Affiliation winningTeam = Affiliation.Blue;
+    public Affiliation winningTeam = Affiliation.Magenta;
     public int goalDistricts = 3;
     int totalRed, totalBlue, totalGreen = 0;
     int currentRed, currentBlue, currentGreen = 0;
@@ -86,13 +86,13 @@ public class GameManager : MonoBehaviour
             units.Add(obj.GetComponent<Unit>());
             switch (units[units.Count - 1].affiliation)
             {
-                case Affiliation.Blue:
+                case Affiliation.Magenta:
                     totalBlue += 1;
                     break;
                 case Affiliation.Green:
                     totalGreen += 1;
                     break;
-                case Affiliation.Red:
+                case Affiliation.Yellow:
                     totalRed += 1;
                     break;
                 default:
@@ -112,7 +112,7 @@ public class GameManager : MonoBehaviour
         }
 
 
-        //Create a background collider for raycast checks	
+        //Create ckground collider for raycast checks	
         GameObject backgroundPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
         backgroundPlane.transform.position = Vector3.zero;
         backgroundPlane.transform.localScale = new Vector3(10.0f, 10.0f, 10.0f);
@@ -193,13 +193,13 @@ public class GameManager : MonoBehaviour
                 if (connectors.Contains(c))
                 {
                     //Debug.Log("Nodes already connected");
-                    Destroy(c.gameObject);
-                    tempConnector.GetComponent<Renderer>().material.color = Color.red;
+                    Destroy(c.gameObject);                    tempConnector.GetComponent<Renderer>().material.color = Color.red;
                 }
                 else {
                     UpdateConnector(c, startNode.transform.position, endNode.transform.position);
                     c.GetComponent<Renderer>().material.color = Color.black;
                     c.transform.SetParent(this.transform);
+                    c.transform.localScale = new Vector3(1.5f, c.transform.localScale.y, c.transform.localScale.z);
                     c.name = "Connector_" + c.A.ID + "_" + c.B.ID;
                     connectors.Add(c);
                     startNode = endNode;
@@ -252,22 +252,22 @@ public class GameManager : MonoBehaviour
 
         string winner = "blah";
         Color winColor = Color.white;
-        if (winningTeam == Affiliation.Blue)
+        if (winningTeam == Affiliation.Magenta)
         {
-            winner = "Blues";
-            winColor = new Color(64.0f / 255.0f, 121.0f / 255.0f, 140.0f / 255.0f);
+            winner = "Magenta";
+            winColor = new Color(234.0f / 255.0f, 100.0f / 255.0f, 222.0f / 255.0f);
         }
-        else if (winningTeam == Affiliation.Red)
+        else if (winningTeam == Affiliation.Yellow)
         {
-            winner = "Yellows";
+            winner = "Yellow";
             winColor = new Color(243.0f / 255.0f, 201.0f / 255.0f, 105.0f / 255.0f);
         }
         else
         {
-            winner = "Greens";
+            winner = "Green";
             winColor = new Color(35.0f / 255.0f, 150.0f / 255.0f, 127.0f / 255.0f);
         }
-        uiManager.SetText(uiManager.Goal, goalDistricts + " Districts\n" + winner + " Win");
+        uiManager.SetText(uiManager.Goal, goalDistricts + " Districts\n" + winner + " Wins");
         uiManager.SetColor(uiManager.Goal, winColor);
         uiManager.SetText(uiManager.District, districts.Count() + "/" + goalDistricts + "\nDistricts");
 
@@ -276,10 +276,10 @@ public class GameManager : MonoBehaviour
         {
             switch (dist.winner)
             {
-                case Affiliation.Red:
+                case Affiliation.Yellow:
                     partyDistricts[0] += 1;
                     break;
-                case Affiliation.Blue:
+                case Affiliation.Magenta:
                     partyDistricts[1] += 1;
                     break;
                 case Affiliation.Green:
@@ -364,6 +364,11 @@ public class GameManager : MonoBehaviour
         {
             uiManager.ShowVictory();
         }
+    }
+
+    public void MainMenu()
+    {
+        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
     }
 
     public void NextLevel()

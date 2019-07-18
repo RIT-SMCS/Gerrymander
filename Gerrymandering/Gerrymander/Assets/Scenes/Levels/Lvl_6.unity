@@ -1890,7 +1890,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11446434, guid: 73a0a8a7bffe7cb4a8be9baee585cf26, type: 2}
       propertyPath: lastLevel
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 21253520, guid: 73a0a8a7bffe7cb4a8be9baee585cf26, type: 2}
       propertyPath: m_Enabled
@@ -3016,6 +3016,10 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11400892, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
+      propertyPath: gmObj
+      value: 
+      objectReference: {fileID: 1199512940}
     - target: {fileID: 155894, guid: 51e68580a7d9bd946b7da90c68376470, type: 2}
       propertyPath: m_Name
       value: Canvas
@@ -3616,6 +3620,11 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2388fc7d134653a43b7ab2586c828266, type: 2}
   m_IsPrefabAsset: 0
+--- !u!1 &1199512940 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 178802, guid: 2388fc7d134653a43b7ab2586c828266,
+    type: 2}
+  m_PrefabInternal: {fileID: 1199512939}
 --- !u!1001 &1204430141
 Prefab:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-﻿ using UnityEngine;
+ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -108,8 +108,16 @@ public class UIManager : MonoBehaviour {
 	void Update () {
         if (solved)
         {
-            if(gameManager.transitionPrefab.GetComponent<Transition>().readyForNext) {
-                gameManager.NextLevel();
+            if(gameManager.transitionPrefab.GetComponent<Transition>().readyForNext) {                 
+                if (!gameManager.transitionPrefab.GetComponent<Transition>().lastLevel)
+                {
+
+                    gameManager.NextLevel();
+                }
+                else
+                {
+                    gameManager.MainMenu();
+                }
             }
         }
 	}
