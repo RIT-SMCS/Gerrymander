@@ -1,18 +1,36 @@
 fileFormatVersion: 2
 guid: fcddd638026969345b57e22751ced168
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: buttonDefault@3x_0
-    21300002: buttonDefault@3x_1
-    21300004: buttonDefault@3x_2
-    21300006: buttonDefault@3x_3
-    21300008: buttonDefault@3x_4
-    21300010: buttonDefault@3x_5
-    21300012: buttonDefault@3x_6
-    21300014: buttonDefault@3x_7
-    21300016: buttonDefault@3x_8
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: buttonDefault@3x_0
+  - first:
+      213: 21300002
+    second: buttonDefault@3x_1
+  - first:
+      213: 21300004
+    second: buttonDefault@3x_2
+  - first:
+      213: 21300006
+    second: buttonDefault@3x_3
+  - first:
+      213: 21300008
+    second: buttonDefault@3x_4
+  - first:
+      213: 21300010
+    second: buttonDefault@3x_5
+  - first:
+      213: 21300012
+    second: buttonDefault@3x_6
+  - first:
+      213: 21300014
+    second: buttonDefault@3x_7
+  - first:
+      213: 21300016
+    second: buttonDefault@3x_8
   externalObjects: {}
-  serializedVersion: 7
+  serializedVersion: 10
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -55,7 +73,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 81, y: 81, z: 81, w: 81}
+  spriteBorder: {x: 162, y: 162, z: 162, w: 162}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -108,6 +126,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 8dfd9247aa6f0404190cece4fbaf8f84
+      internalID: 21300000
       vertices: []
       indices: 
       edges: []
@@ -116,10 +135,12 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 8d0ca49c8b4a2f54cbaf8f4b36432612
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
+    secondaryTextures: []
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

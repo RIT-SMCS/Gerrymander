@@ -9,6 +9,7 @@ TagManager:
   - Connector
   - Node
   - District
+  - Population
   layers:
   - Default
   - TransparentFX

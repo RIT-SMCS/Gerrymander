@@ -33,6 +33,7 @@ public class LevelSelectMenu : MonoBehaviour {
             
             levelButtons.Add(Instantiate(tempButton));
             levelButtons[levelButtons.Count - 1].transform.SetParent(transform);
+            levelButtons[levelButtons.Count - 1].transform.localScale = new Vector3(1.0f,1.0f,1.0f);
 
         }
 	}
