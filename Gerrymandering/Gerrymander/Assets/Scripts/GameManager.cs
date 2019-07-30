@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -168,7 +168,7 @@ public class GameManager : MonoBehaviour
                 UpdateConnector(tempConnector, startNode.transform.position, hit.point);
                 if (tempConnector.transform.localScale.z > maxConnectorLength) //too long
                 {
-                    tempConnector.GetComponent<Renderer>().material.color = Color.magenta;
+                    tempConnector.GetComponent<Renderer>().material.color = Color.red;
                     validConnector = false;
                 }
                 else if (tempConnector.IsColliding()) //collides with other stuff
