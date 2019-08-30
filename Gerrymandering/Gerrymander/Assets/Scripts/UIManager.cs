@@ -7,9 +7,11 @@ using UnityEngine.iOS;
 public class UIManager : MonoBehaviour {
     GameManager gameManager;
     public GameObject gmObj;
-    public GameObject Goal, Pop, District, GOP, Dem, Ind;
-    Text GoalText, PopText, DistrictText, GOPText, DemText, IndText;
-    Dictionary<GameObject, Text> textDict;
+    public GameObject[] Goal, Pop, District;
+    public GameObject GOP, Dem, Ind;
+    Text[] GoalText, PopText, DistrictText;
+    Text GOPText, DemText, IndText;
+    Dictionary<TextType, List<Text>> textDict;
     public GameObject winPrefab, pausePrefab;
     bool solved = false;
     bool paused = false;
@@ -35,32 +37,56 @@ public class UIManager : MonoBehaviour {
         {
             gameManager = gmObj.GetComponent<GameManager>();
         }
-        GoalText = Goal.GetComponent<Text>();
-        PopText = Pop.GetComponent<Text>();
-        DistrictText = District.GetComponent<Text>();
+        textDict = new Dictionary<TextType, List<Text>>();
+        textDict.Add(TextType.Goal, new List<Text>());
+        GoalText = new Text[Goal.Length];
+        for (int i = 0; i < Goal.Length; i++)
+        {
+            GoalText[i] = Goal[i].GetComponent<Text>();
+            textDict[TextType.Goal].Add(GoalText[i]);
+        }
+
+        textDict.Add(TextType.Pop, new List<Text>());
+        PopText = new Text[Pop.Length];
+        for (int i = 0; i < Goal.Length; i++)
+        {
+            PopText[i] = Pop[i].GetComponent<Text>();
+            textDict[TextType.Pop].Add(PopText[i]);
+        }
+        textDict.Add(TextType.District, new List<Text>());
+        DistrictText = new Text[Goal.Length];
+        for (int i = 0; i < Goal.Length; i++)
+        {
+            DistrictText[i] = District[i].GetComponent<Text>();
+            textDict[TextType.District].Add(DistrictText[i]);
+        }
         GOPText = GOP.GetComponent<Text>();
         DemText = Dem.GetComponent<Text>();
         IndText = Ind.GetComponent<Text>();
-
-        textDict = new Dictionary<GameObject, Text>();
-        textDict.Add(Goal, GoalText);
-        textDict.Add(Pop, PopText);
-        textDict.Add(District, DistrictText);
-        textDict.Add(GOP, GOPText);
-        textDict.Add(Dem, DemText);
-        textDict.Add(Ind, IndText);
+        textDict.Add(TextType.GOP, new List<Text>());
+        textDict[TextType.GOP].Add(GOPText);
+        textDict.Add(TextType.Dem, new List<Text>());
+        textDict[TextType.Dem].Add(DemText);
+        textDict.Add(TextType.Ind, new List<Text>());
+        textDict[TextType.Ind].Add(IndText);
 	}
 	
-
-
-    public void SetText(GameObject obj, string newText)
+    public void SetText(TextType type, string newText)
     {
-        textDict[obj].text = newText;
+        List<Text> texts = textDict[type];
+        foreach (Text text in texts)
+        {
+            text.text = newText;
+        }
     }
 
-    public void SetColor(GameObject obj, Color color)
+    public void SetColor(TextType type, Color color)
     {
-        textDict[obj].color = color;
+        List<Text> texts = textDict[type];
+        foreach (Text text in texts)
+        {
+            text.color = color;
+        }
     }
 
 
@@ -108,16 +134,9 @@ public class UIManager : MonoBehaviour {
 	void Update () {
         if (solved)
         {
-            if(gameManager.transitionPrefab.GetComponent<Transition>().readyForNext) {                 
-                if (!gameManager.transitionPrefab.GetComponent<Transition>().lastLevel)
-                {
-
-                    gameManager.NextLevel();
-                }
-                else
-                {
-                    gameManager.MainMenu();
-                }
+            if(gameManager.transitionPrefab.GetComponent<Transition>().readyForNext)         
+            {
+                gameManager.NextLevel();
             }
         }
 	}

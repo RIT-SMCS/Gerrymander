@@ -32,4 +32,9 @@ public class MainMenu : MonoBehaviour {
     {
         SceneManager.LoadScene("LevelSelect", LoadSceneMode.Single);
     }
+
+    public void LoadAboutScreen()
+    {
+        SceneManager.LoadScene("About", LoadSceneMode.Single);
+    }
 }

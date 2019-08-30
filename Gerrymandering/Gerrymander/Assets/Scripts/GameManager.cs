@@ -15,6 +15,8 @@ using Voxel;
 //awful coding practice.
 //change colors for color-blind people
 public enum Affiliation { Yellow = 0, Magenta = 1, Green = 2, None = -1};
+public enum TextType { Goal = 0, Pop = 1, District = 2, GOP = 3, Dem = 4, Ind = 5, None = -1 };
+
 public class GameManager : MonoBehaviour
 {
     public GameObject uiCanvas;
@@ -48,7 +50,6 @@ public class GameManager : MonoBehaviour
 
     private JobHandle handle;
     private CycleSortJob cycleSort;
-
 
     // Use this for initialization
     void Start()
@@ -267,9 +268,9 @@ public class GameManager : MonoBehaviour
             winner = "Green";
             winColor = new Color(35.0f / 255.0f, 150.0f / 255.0f, 127.0f / 255.0f);
         }
-        uiManager.SetText(uiManager.Goal, goalDistricts + " Districts\n" + winner + " Wins");
-        uiManager.SetColor(uiManager.Goal, winColor);
-        uiManager.SetText(uiManager.District, districts.Count() + "/" + goalDistricts + "\nDistricts");
+        uiManager.SetText(TextType.Goal, goalDistricts + " Districts\n" + winner + " Wins");
+        uiManager.SetColor(TextType.Goal, winColor);
+        uiManager.SetText(TextType.District, districts.Count() + "/" + goalDistricts + "\nDistricts");
 
         currentBlue = currentGreen = currentRed = 0;
         foreach (DistrictCollider2 dist in districts)
@@ -293,46 +294,46 @@ public class GameManager : MonoBehaviour
         }
 
         int unitsInDistricts = currentRed + currentGreen + currentBlue;
-        uiManager.SetText(uiManager.Pop, unitsInDistricts + "/" + units.Count + " in\nDistricts");
+        uiManager.SetText(TextType.Pop, unitsInDistricts + "/" + units.Count + " in\nDistricts");
 
         GameObject panel;
-        uiManager.SetText(uiManager.GOP, currentRed + "/" + totalRed);
+        uiManager.SetText(TextType.GOP, currentRed + "/" + totalRed);
         panel = uiManager.GOP.transform.parent.gameObject;
         if (currentRed == totalRed)
         {
             panel.GetComponent<Image>().fillCenter = true;
-            uiManager.SetColor(uiManager.GOP, Color.black);
+            uiManager.SetColor(TextType.GOP, Color.black);
         }
         else
         {
             panel.GetComponent<Image>().fillCenter = false;
-            uiManager.SetColor(uiManager.GOP, Color.white);
+            uiManager.SetColor(TextType.GOP, Color.white);
         }
 
-        uiManager.SetText(uiManager.Dem, currentBlue + "/" + totalBlue);
+        uiManager.SetText(TextType.Dem, currentBlue + "/" + totalBlue);
         panel = uiManager.Dem.transform.parent.gameObject;
         if (currentBlue == totalBlue)
         {
             panel.GetComponent<Image>().fillCenter = true;
-            uiManager.SetColor(uiManager.Dem, Color.black);
+            uiManager.SetColor(TextType.Dem, Color.black);
         }
         else
         {
             panel.GetComponent<Image>().fillCenter = false;
-            uiManager.SetColor(uiManager.Dem, Color.white);
+            uiManager.SetColor(TextType.Dem, Color.white);
         }
 
-        uiManager.SetText(uiManager.Ind, currentGreen + "/" + totalGreen);
+        uiManager.SetText(TextType.Ind, currentGreen + "/" + totalGreen);
         panel = uiManager.Ind.transform.parent.gameObject;
         if (currentGreen == totalGreen)
         {
             panel.GetComponent<Image>().fillCenter = true;
-            uiManager.SetColor(uiManager.Ind, Color.black);
+            uiManager.SetColor(TextType.Ind, Color.black);
         }
         else
         {
             panel.GetComponent<Image>().fillCenter = false;
-            uiManager.SetColor(uiManager.Ind, Color.white);
+            uiManager.SetColor(TextType.Ind, Color.white);
         }
 
 
@@ -383,7 +384,11 @@ public class GameManager : MonoBehaviour
             string nextLevelString = "Lvl_" + num;
             //Application.LoadLevel("Scenes/Levels/" + nextLevelString);
             ClearConnections();
-            SceneManager.LoadScene(nextLevelString, LoadSceneMode.Single);
+            if (transitionPrefab.GetComponent<Transition>().lastLevel)
+            {
+                MainMenu();
+            }
+            else SceneManager.LoadScene(nextLevelString, LoadSceneMode.Single);
 
 
         }
