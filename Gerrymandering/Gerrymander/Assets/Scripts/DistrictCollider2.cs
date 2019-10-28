@@ -77,7 +77,8 @@ public class DistrictCollider2 : MonoBehaviour {
 		mesh.RecalculateNormals (); 
 		//this.gameObject.AddComponent<MeshCollider>(mesh);
 		MeshCollider mCol = this.gameObject.AddComponent<MeshCollider> (); 
-		mCol.sharedMesh = mesh; 
+		mCol.sharedMesh = mesh;
+		this.transform.position = this.transform.position - new Vector3(0.0f,1.0f,0.0f); 
 		//mCol.isTrigger = true; 
 	}
 
