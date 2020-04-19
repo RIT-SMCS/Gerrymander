@@ -1,10 +1,11 @@
 fileFormatVersion: 2
 guid: 618f22e6aa53f584c958abc207443f55
-timeCreated: 1454700261
-licenseType: Pro
 MonoImporter:
+  externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - angryPrefab: {instanceID: 0}
+  - happyPrefab: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -8,10 +8,14 @@ public class DistrictCollider2 : MonoBehaviour {
 	Mesh mesh;// = new Mesh(); 
 	public GameObject[] points;
 	
-	public List<GameObject> units = new List<GameObject> (); 
+	public List<Unit> units = new List<Unit> (); 
 	public int[] rgb;
-	public Affiliation winner; 
+	public Affiliation winner = Affiliation.None; 
     public int NumUnits = 0;
+	new Renderer renderer;
+	bool checkUnits = false;
+
+	public GameObject angryPrefab, happyPrefab;
 
 	public DistrictCollider2(GameObject[] points)
 	{
@@ -20,16 +24,35 @@ public class DistrictCollider2 : MonoBehaviour {
 	
 	// Use this for initialization
 	void Awake () {
+		renderer = this.gameObject.GetComponent<Renderer>();
 		mesh = new Mesh (); 
 		this.GetComponent<MeshFilter> ().mesh = mesh; 
 		rgb = new int[3];
 		for (int i = 0; i< rgb.Length; i++)
-			rgb [i] = 0; 
+			rgb [i] = 0;
+		winner = Affiliation.None;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if(checkUnits)
+		{
+			foreach (Unit unit in units)
+			{
+				Vector3 spawnPosition = unit.gameObject.transform.position;
+				bool happy = unit.affiliation == winner;
+				if (happy)
+				{
+					GameObject unitFeeling = Instantiate(happyPrefab);
+					unitFeeling.transform.position = spawnPosition + Vector3.up * 20;
+				} else
+				{
+					GameObject unitFeeling = Instantiate(angryPrefab);
+					unitFeeling.transform.position = spawnPosition + Vector3.up * 20;
+				}
+			}
+			checkUnits = false;
+		}
 	}
 	
 	/// <summary>
@@ -40,17 +63,17 @@ public class DistrictCollider2 : MonoBehaviour {
 	/// <param name="points">Array of GameObjects.</param>
 	public void SetCollider(GameObject[] points)
 	{
+		Vector3 pos = Vector3.zero;
 		//Debug.Log ("SetCollider called"); 
 		Vector3[] vertices = new Vector3[points.Length]; 
 		for (int i = 0; i < points.Length; i++) 
 		{
-			vertices[i] = points[i].transform.position; 
+			vertices[i] = points[i].transform.position;
+			pos += points[i].transform.position;
 		}
-		//Debug.Log ("Mesh is" + mesh); 
-		//Debug.Log (vertices);
-		//Debug.Log (mesh.vertices); 
+		
 		mesh.vertices = vertices; 
-		SetCollider (vertices); 
+		SetCollider (vertices);
 		this.transform.position = Vector3.zero;
 		this.transform.rotation = Quaternion.identity;
 	}
@@ -91,21 +114,49 @@ public class DistrictCollider2 : MonoBehaviour {
 	{
         ++NumUnits;
         rgb[faction]++;
-		if (rgb [0] > rgb [1] && rgb [0] > rgb [2]) {
+		if (rgb[0] > rgb [1] && rgb [0] > rgb [2]) {
 			winner = Affiliation.Yellow;
-			this.gameObject.GetComponent<Renderer> ().material.color = new Color(243.0f / 255.0f, 201.0f / 255.0f, 105.0f / 255.0f);
-        } else if (rgb [1] > rgb [0] && rgb [1] > rgb [2]) {
+			renderer.material.color = new Color(243.0f / 255.0f, 201.0f / 255.0f, 105.0f / 255.0f);
+        } else if (rgb[1] > rgb [0] && rgb [1] > rgb [2]) {
 			winner = Affiliation.Green;
-			this.gameObject.GetComponent<Renderer> ().material.color = new Color(35.0f / 255.0f, 150.0f / 255.0f, 127.0f / 255.0f);
+			renderer.material.color = new Color(35.0f / 255.0f, 150.0f / 255.0f, 127.0f / 255.0f);
         } else if (rgb [2] > rgb [0] && rgb [2] > rgb [1]) {
 			winner = Affiliation.Magenta;
-			this.gameObject.GetComponent<Renderer> ().material.color = new Color(234.0f / 255.0f, 100.0f / 255.0f, 222.0f / 255.0f);
+			renderer.material.color = new Color(234.0f / 255.0f, 100.0f / 255.0f, 222.0f / 255.0f);
         } else {
-			winner = Affiliation.None; 
-			this.gameObject.GetComponent<Renderer> ().material.color = Color.grey; 
+			winner = Affiliation.None;
+			renderer.material.color = Color.grey; 
 		}
-
-		//Debug.Log (winner); 
+		checkUnits = true;
 	}
 	
+
+	public void AddUnit(Unit unit)
+	{
+		++NumUnits;
+		units.Add(unit);
+		int faction = (int)unit.affiliation;
+		rgb[faction]++;
+		if (rgb[0] > rgb[1] && rgb[0] > rgb[2])
+		{
+			winner = Affiliation.Yellow;
+			renderer.material.color = new Color(243.0f / 255.0f, 201.0f / 255.0f, 105.0f / 255.0f);
+		}
+		else if (rgb[1] > rgb[0] && rgb[1] > rgb[2])
+		{
+			winner = Affiliation.Magenta;
+			renderer.material.color = new Color(234.0f / 255.0f, 100.0f / 255.0f, 222.0f / 255.0f);
+		}
+		else if ( rgb[2] > rgb[0] && rgb[2] > rgb[1])
+		{
+			winner = Affiliation.Green;
+			renderer.material.color = new Color(35.0f / 255.0f, 150.0f / 255.0f, 127.0f / 255.0f);
+		}
+		else 
+		{
+			winner = Affiliation.None;
+			renderer.material.color = Color.grey;
+		}
+		checkUnits = true;
+	}
 }

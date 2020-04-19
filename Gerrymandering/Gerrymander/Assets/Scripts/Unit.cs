@@ -52,14 +52,8 @@ public class Unit : MonoBehaviour {
 	{
 		if (other.gameObject.CompareTag ("District")) 
 		{
-			DistrictCollider2 dist = other.gameObject.GetComponent<DistrictCollider2>(); 
-			if(affiliation == Affiliation.Yellow)
-				dist.AddUnit(0); 
-			else if(affiliation == Affiliation.Green)
-				dist.AddUnit(1); 
-			else
-				dist.AddUnit(2); 
-		}
-	}
+			DistrictCollider2 dist = other.gameObject.GetComponent<DistrictCollider2>();
+            dist.AddUnit(this);
+        }
+    }
 }
-

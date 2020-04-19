@@ -3,12 +3,13 @@
 --- !u!1 &178802
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
   m_Component:
-  - 4: {fileID: 492988}
-  - 114: {fileID: 11403942}
+  - component: {fileID: 492988}
+  - component: {fileID: 11403942}
   m_Layer: 0
   m_Name: GameManagerPrefab
   m_TagString: Untagged
@@ -18,9 +19,10 @@ GameObject:
   m_IsActive: 1
 --- !u!4 &492988
 Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 178802}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -28,11 +30,13 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &11403942
 MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 178802}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -40,21 +44,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCanvas: {fileID: 0}
-  districtPrefab: {fileID: 135726, guid: 403d0041fa331d442bd6569e836a69ea, type: 2}
-  connectorPrefab: {fileID: 11494194, guid: b3936291835e4b445978cb143b89cd8b, type: 2}
+  districtPrefab: {fileID: 135726, guid: 403d0041fa331d442bd6569e836a69ea, type: 3}
+  nodePrefab: {fileID: 0}
+  transitionPrefab: {fileID: 0}
+  happyPrefab: {fileID: 7656965997143895059, guid: 697a125a01a95ca41ab2a430f7059cc8,
+    type: 3}
+  angryPrefab: {fileID: 7695080069888378543, guid: 0ff76a192bbf0344794337a4b6639ec5,
+    type: 3}
+  winningTeam: 1
+  goalDistricts: 3
+  connectorPrefab: {fileID: 11494194, guid: b3936291835e4b445978cb143b89cd8b, type: 3}
   maxConnectorLength: 5
---- !u!1001 &100100000
-Prefab:
-  m_ObjectHideFlags: 1
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 0}
-      propertyPath: districtPrefab
-      value: 
-      objectReference: {fileID: 135726, guid: 403d0041fa331d442bd6569e836a69ea, type: 2}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 178802}
-  m_IsPrefabParent: 1

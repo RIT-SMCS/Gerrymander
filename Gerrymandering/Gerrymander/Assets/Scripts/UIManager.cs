@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour {
     Text GOPText, DemText, IndText;
     Dictionary<TextType, List<Text>> textDict;
     public GameObject winPrefab, pausePrefab;
+    public Text densityText, popsText, yPop, mPop, gPop;
     bool solved = false;
     bool paused = false;
 	// Use this for initialization
@@ -46,9 +47,12 @@ public class UIManager : MonoBehaviour {
             textDict[TextType.Goal].Add(GoalText[i]);
         }
 
+        textDict.Add(TextType.Density, new List<Text>());
+        textDict[TextType.Density].Add(densityText);
+
         textDict.Add(TextType.Pop, new List<Text>());
         PopText = new Text[Pop.Length];
-        for (int i = 0; i < Goal.Length; i++)
+        for (int i = 0; i < Pop.Length; i++)
         {
             PopText[i] = Pop[i].GetComponent<Text>();
             textDict[TextType.Pop].Add(PopText[i]);
@@ -69,7 +73,16 @@ public class UIManager : MonoBehaviour {
         textDict[TextType.Dem].Add(DemText);
         textDict.Add(TextType.Ind, new List<Text>());
         textDict[TextType.Ind].Add(IndText);
-	}
+
+        textDict.Add(TextType.PopTot, new List<Text>());
+        textDict[TextType.PopTot].Add(popsText);
+        textDict.Add(TextType.yPop, new List<Text>());
+        textDict[TextType.yPop].Add(yPop);
+        textDict.Add(TextType.mPop, new List<Text>());
+        textDict[TextType.mPop].Add(mPop);
+        textDict.Add(TextType.gPop, new List<Text>());
+        textDict[TextType.gPop].Add(gPop);
+    }
 	
     public void SetText(TextType type, string newText)
     {

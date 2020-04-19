@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +15,7 @@ using Voxel;
 //awful coding practice.
 //change colors for color-blind people
 public enum Affiliation { Yellow = 0, Magenta = 1, Green = 2, None = -1};
-public enum TextType { Goal = 0, Pop = 1, District = 2, GOP = 3, Dem = 4, Ind = 5, None = -1 };
+public enum TextType { Goal = 0, Pop = 1, District = 2, GOP = 3, Dem = 4, Ind = 5, Density = 6, PopTot = 7, yPop = 8, mPop = 9, gPop = 10, None = -1 };
 
 public class GameManager : MonoBehaviour
 {
@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     public GameObject districtPrefab;
     public GameObject nodePrefab;
     public GameObject transitionPrefab;
+    public GameObject happyPrefab, angryPrefab;
     GameObject[] nodes;
     List<Connector> connectors;
     List<Unit> units;
@@ -36,11 +37,12 @@ public class GameManager : MonoBehaviour
     UIManager uiManager;
     public Affiliation winningTeam = Affiliation.Magenta;
     public int goalDistricts = 3;
-    int totalRed, totalBlue, totalGreen = 0;
+    int totalYellow, totalMagenta, totalGreen = 0;
     int currentRed, currentBlue, currentGreen = 0;
     //Dictionary<Affiliation, int> partyDistricts;
     public Connector connectorPrefab;
     public float maxConnectorLength = 5.0f;
+    bool guiUpdate = true;
 
 
     private Node startNode = null;
@@ -88,13 +90,13 @@ public class GameManager : MonoBehaviour
             switch (units[units.Count - 1].affiliation)
             {
                 case Affiliation.Magenta:
-                    totalBlue += 1;
+                    totalMagenta += 1;
                     break;
                 case Affiliation.Green:
                     totalGreen += 1;
                     break;
                 case Affiliation.Yellow:
-                    totalRed += 1;
+                    totalYellow += 1;
                     break;
                 default:
                     break;
@@ -247,100 +249,13 @@ public class GameManager : MonoBehaviour
         #endregion
         //end raycast
 
-
-        //update GUI
-        #region Setting Text
-
-        string winner = "blah";
-        Color winColor = Color.white;
-        if (winningTeam == Affiliation.Magenta)
+        if (guiUpdate)
         {
-            winner = "Magenta";
-            winColor = new Color(234.0f / 255.0f, 100.0f / 255.0f, 222.0f / 255.0f);
+            UpdateGUI();
         }
-        else if (winningTeam == Affiliation.Yellow)
-        {
-            winner = "Yellow";
-            winColor = new Color(243.0f / 255.0f, 201.0f / 255.0f, 105.0f / 255.0f);
-        }
-        else
-        {
-            winner = "Green";
-            winColor = new Color(35.0f / 255.0f, 150.0f / 255.0f, 127.0f / 255.0f);
-        }
-        uiManager.SetText(TextType.Goal, goalDistricts + " Districts\n" + winner + " Wins");
-        uiManager.SetColor(TextType.Goal, winColor);
-        uiManager.SetText(TextType.District, districts.Count() + "/" + goalDistricts + "\nDistricts");
-
-        currentBlue = currentGreen = currentRed = 0;
-        foreach (DistrictCollider2 dist in districts)
-        {
-            switch (dist.winner)
-            {
-                case Affiliation.Yellow:
-                    partyDistricts[0] += 1;
-                    break;
-                case Affiliation.Magenta:
-                    partyDistricts[1] += 1;
-                    break;
-                case Affiliation.Green:
-                    partyDistricts[2] += 1;
-                    break;
-            }
-            currentRed += dist.rgb[0];
-            currentGreen += dist.rgb[1];
-            currentBlue += dist.rgb[2];
-
-        }
-
-        int unitsInDistricts = currentRed + currentGreen + currentBlue;
-        uiManager.SetText(TextType.Pop, unitsInDistricts + "/" + units.Count + " in\nDistricts");
-
-        GameObject panel;
-        uiManager.SetText(TextType.GOP, currentRed + "/" + totalRed);
-        panel = uiManager.GOP.transform.parent.gameObject;
-        if (currentRed == totalRed)
-        {
-            panel.GetComponent<Image>().fillCenter = true;
-            uiManager.SetColor(TextType.GOP, Color.black);
-        }
-        else
-        {
-            panel.GetComponent<Image>().fillCenter = false;
-            uiManager.SetColor(TextType.GOP, Color.white);
-        }
-
-        uiManager.SetText(TextType.Dem, currentBlue + "/" + totalBlue);
-        panel = uiManager.Dem.transform.parent.gameObject;
-        if (currentBlue == totalBlue)
-        {
-            panel.GetComponent<Image>().fillCenter = true;
-            uiManager.SetColor(TextType.Dem, Color.black);
-        }
-        else
-        {
-            panel.GetComponent<Image>().fillCenter = false;
-            uiManager.SetColor(TextType.Dem, Color.white);
-        }
-
-        uiManager.SetText(TextType.Ind, currentGreen + "/" + totalGreen);
-        panel = uiManager.Ind.transform.parent.gameObject;
-        if (currentGreen == totalGreen)
-        {
-            panel.GetComponent<Image>().fillCenter = true;
-            uiManager.SetColor(TextType.Ind, Color.black);
-        }
-        else
-        {
-            panel.GetComponent<Image>().fillCenter = false;
-            uiManager.SetColor(TextType.Ind, Color.white);
-        }
-
-
-
-        #endregion
+        
         //check for win condition
-        bool allDistricted = (currentBlue == totalBlue) && (currentRed == totalRed) && (currentGreen == totalGreen);
+        bool allDistricted = (currentBlue == totalMagenta) && (currentRed == totalYellow) && (currentGreen == totalGreen);
         bool rightDistrictPop = true;
 
         foreach (DistrictCollider2 district in districts)
@@ -367,6 +282,95 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void UpdateGUI()
+    {
+        //update GUI
+        #region Setting Text
+        string winner = "blah";
+        Color winColor = Color.white;
+        if (winningTeam == Affiliation.Magenta)
+        {
+            winner = "Magenta";
+            winColor = new Color(234.0f / 255.0f, 100.0f / 255.0f, 222.0f / 255.0f);
+        }
+        else if (winningTeam == Affiliation.Yellow)
+        {
+            winner = "Yellow";
+            winColor = new Color(243.0f / 255.0f, 201.0f / 255.0f, 105.0f / 255.0f);
+        }
+        else
+        {
+            winner = "Green";
+            winColor = new Color(35.0f / 255.0f, 150.0f / 255.0f, 127.0f / 255.0f);
+        }
+        uiManager.SetText(TextType.Goal, goalDistricts + " Districts\n" + winner + " Wins");
+        uiManager.SetColor(TextType.Goal, winColor);
+        uiManager.SetText(TextType.District, districts.Count() + "/" + goalDistricts + "\nDistricts");
+        uiManager.SetText(TextType.Density, units.Count / goalDistricts + " Per District");
+        uiManager.SetText(TextType.PopTot, "Population: " + units.Count);
+        uiManager.SetText(TextType.yPop, "■ " + totalYellow);
+        uiManager.SetText(TextType.mPop, "■ " + totalMagenta);
+        uiManager.SetText(TextType.gPop, "■ " + totalGreen);
+
+        currentBlue = currentGreen = currentRed = 0;
+        foreach (DistrictCollider2 dist in districts)
+        {
+            if (dist.winner != Affiliation.None)
+            {
+                partyDistricts[(int)dist.winner] += 1;
+            }
+            currentRed += dist.rgb[(int)Affiliation.Yellow];
+            currentGreen += dist.rgb[(int)Affiliation.Green];
+            currentBlue += dist.rgb[(int)Affiliation.Magenta];
+
+        }
+
+        int unitsInDistricts = currentRed + currentGreen + currentBlue;
+        uiManager.SetText(TextType.Pop, unitsInDistricts + "/" + units.Count + " in\nDistricts");
+
+        GameObject panel;
+        uiManager.SetText(TextType.GOP, currentRed + "/" + totalYellow);
+        panel = uiManager.GOP.transform.parent.gameObject;
+        if (currentRed == totalYellow)
+        {
+            panel.GetComponent<Image>().fillCenter = true;
+            uiManager.SetColor(TextType.GOP, Color.black);
+        }
+        else
+        {
+            panel.GetComponent<Image>().fillCenter = false;
+            uiManager.SetColor(TextType.GOP, Color.white);
+        }
+
+        uiManager.SetText(TextType.Dem, currentBlue + "/" + totalMagenta);
+        panel = uiManager.Dem.transform.parent.gameObject;
+        if (currentBlue == totalMagenta)
+        {
+            panel.GetComponent<Image>().fillCenter = true;
+            uiManager.SetColor(TextType.Dem, Color.black);
+        }
+        else
+        {
+            panel.GetComponent<Image>().fillCenter = false;
+            uiManager.SetColor(TextType.Dem, Color.white);
+        }
+
+        uiManager.SetText(TextType.Ind, currentGreen + "/" + totalGreen);
+        panel = uiManager.Ind.transform.parent.gameObject;
+        if (currentGreen == totalGreen)
+        {
+            panel.GetComponent<Image>().fillCenter = true;
+            uiManager.SetColor(TextType.Ind, Color.black);
+        }
+        else
+        {
+            panel.GetComponent<Image>().fillCenter = false;
+            uiManager.SetColor(TextType.Ind, Color.white);
+        }
+        #endregion
+        guiUpdate = false;
+    }
+
     public void MainMenu()
     {
         SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
@@ -382,7 +386,6 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt(num.ToString(), 1);
             num += 1;
             string nextLevelString = "Lvl_" + num;
-            //Application.LoadLevel("Scenes/Levels/" + nextLevelString);
             ClearConnections();
             if (transitionPrefab.GetComponent<Transition>().lastLevel)
             {
@@ -399,8 +402,10 @@ public class GameManager : MonoBehaviour
     {
         if (!handle.IsCompleted || cycleSort.resultCycles.Length == 0) return;
 
-        handle.Complete();
 
+
+        handle.Complete();
+        guiUpdate = true;
         List<List<Node>> newCycles = new List<List<Node>>();
         newCycles = ConvertCycles(cycleSort.resultCycles);
         cycleSort.cyclesList.Dispose();
@@ -408,11 +413,7 @@ public class GameManager : MonoBehaviour
        
 
         newCycles = newCycles.OrderBy(cycle => cycle.Count()).ToList();
-        //print("Cycles: ");
-        //foreach (List<Node> cycle in newCycles)
-        //{
-        //print(cycle.AsEnumerable().Select(node => node.name).Aggregate((total, next) => total += " -> " + next));
-        //}
+
         List<GameObject[]> districtList = new List<GameObject[]>();
         foreach (List<Node> c in newCycles)
         {
@@ -425,19 +426,11 @@ public class GameManager : MonoBehaviour
             if (k < dist.Count)
             {
                 GameObject[] c = dist[k];
-                if (c.Length > 0)
-                {
-                    Node node = c[0].GetComponent<Node>();
-                    string str = "" + c[0].GetComponent<Node>().ID;
-                    for (int i = 1; i < c.Length; ++i)
-                    {
-                        str += "," + c[i].GetComponent<Node>().ID;
-                    }
-                }
 
                 GameObject newDistrict = Instantiate(districtPrefab) as GameObject;
-                newDistrict.GetComponent<DistrictCollider2>().SetCollider(c);
-                districts.Add(newDistrict.GetComponent<DistrictCollider2>());
+                DistrictCollider2 script = newDistrict.GetComponent<DistrictCollider2>();
+                script.SetCollider(c);
+                districts.Add(script);
                 newDistrict.name = "district_" + districts.Count;
                 newDistrict.GetComponent<Renderer>().enabled = true;
             }
@@ -492,19 +485,6 @@ public class GameManager : MonoBehaviour
         //create an empty list of cycles
         List<NativeList<Node.NodeData>> temp = new List<NativeList<Node.NodeData>>();
 
-        //enumerate by 2 to compare each Cycle
-        //for (int i = 0; i < newCycles.Count - 1; i += 2)
-        //{
-        //    //if cycles are the same size, and compare cycles returns true, then the lists describe the same cycle, so filter them
-        //    if(newCycles[i].Count == newCycles[i + 1].Count && CompareCycles(smaller: newCycles[i], larger: newCycles[i + 1]))
-        //    {
-        //        temp.Add(newCycles[i]);
-        //    }
-        //}
-        ////newCycles becomes the temp array, and temp is cleared
-        //newCycles = new List<List<Node>>(temp);
-        //temp.Clear();
-
         Lookup<Node, List<Node>> cycleGroup = (Lookup<Node, List<Node>>)newCycles.ToLookup(cycle => cycle.First());
         NativeList<BlitableArray<Cycle>> groupedCycleData = new NativeList<BlitableArray<Cycle>>(Allocator.Persistent);
         List<List<List<Node>>> groupedCycles = new List<List<List<Node>>>();
@@ -515,12 +495,11 @@ public class GameManager : MonoBehaviour
             groupedCycles.Add(newCycles.FindAll(startsWithNode));
         }
 
-        //Parallel.ForEach(groupedCycles, cycleList =>
         for(int x = 0; x < groupedCycles.Count; x++)
         {
             List<List<Node>> cycleList = groupedCycles[x];
             Cycle[] tempList = new Cycle[cycleList.Count];
-            //Parallel.ForEach(cycleList, cycle =>
+
             for(int y = 0; y< cycleList.Count; y++)
             {
                 List<Node> cycle = cycleList[y];
@@ -535,24 +514,18 @@ public class GameManager : MonoBehaviour
                 cycleData.nodes.Allocate(tempCycle.ToArray(), Allocator.Persistent);
                 tempList[y] = cycleData;
             }
-            //);
+
             BlitableArray<Cycle> tempBlitable = new BlitableArray<Cycle>();
             tempBlitable.Allocate(tempList.ToArray(), Allocator.Persistent);
             groupedCycleData.Add(tempBlitable);
-            /*tempBlitable.Dispose();
-            tempList.Dispose();*/
         }
-        //);
 
         NativeArray<Cycle> sortedCycleData = new NativeArray<Cycle>(groupedCycleData.Length, Allocator.Persistent);
         cycleSort = new CycleSortJob();
         cycleSort.cyclesList = groupedCycleData;
         cycleSort.resultCycles = sortedCycleData;
         handle = cycleSort.Schedule(groupedCycleData.Length, 1);
-        //cycleSort.Run(groupedCycleData.Length);
 
-        /*sortedCycleData.Dispose();
-        groupedCycleData.Dispose();*/
         temp.Clear();
     }
 
@@ -622,9 +595,7 @@ public class GameManager : MonoBehaviour
 
     public void ClearConnections()
     {
-        //print(graph.edgeCount());;
         graph.Clear();
-        //print(graph.edgeCount()); ;
 
         while (connectors.Count > 0)
         {
@@ -659,10 +630,6 @@ public struct CycleSortJob: IJobParallelFor
             for (int cycleIndex = 0; cycleIndex < cycles.Length; cycleIndex++)
             {
                 Cycle cycle = cycles[cycleIndex];
-                //print(cycle.AsEnumerable().Select(node => node.name).Aggregate((total, next) => total += " -> " + next));
-                //print(cycle.Count());
-
-                //int stride = 0;
 
                 Node.NodeData previousNode = cycle.nodes[0];
                 Node.NodeData currentNode = cycle.nodes[1];
@@ -695,13 +662,9 @@ public struct CycleSortJob: IJobParallelFor
                     previousNode = currentNode;
                     currentNode = nextNode;
                 }
-                //foreach (Vector2 corner in Corners)
-                //{
-                //print(corner); 
-                //}
 
                 int area = (int)districtArea(Corners);
-                //print(area); 
+
                 if (area < smallestArea)
                 {
                     smallestArea = area;
